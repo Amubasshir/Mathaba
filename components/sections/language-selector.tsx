@@ -1,38 +1,43 @@
-"use client";
+'use client';
 
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Globe, X } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui/dialog';
+import { useLanguage } from '@/contexts/language-context';
+import { Globe, X } from 'lucide-react';
+import { useState } from 'react';
 
 const languages = [
-  { code: "tr", name: "Türkçe" },
-  { code: "hi", name: "हिंदी" },
-  { code: "sw", name: "Kiswahili" },
-  { code: "bn", name: "বাংলা" },
-  { code: "fa", name: "فارسی" },
-  { code: "en", name: "English" },
-  { code: "ur", name: "اردو" },
-  { code: "fr", name: "Français" },
-  { code: "ar", name: "العربية" },
-  { code: "ms", name: "Malay" },
+  { code: 'tr', name: 'Türkçe' },
+  { code: 'hi', name: 'हिंदी' },
+  { code: 'sw', name: 'Kiswahili' },
+  { code: 'bn', name: 'বাংলা' },
+  { code: 'fa', name: 'فارسی' },
+  { code: 'en', name: 'English' },
+  { code: 'ur', name: 'اردو' },
+  { code: 'fr', name: 'Français' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'ms', name: 'Malay' },
 ];
 
 export default function LanguageSelector() {
-  const [selectedLang, setSelectedLang] = useState("ar");
+  const { language, setLanguage } = useLanguage();
+  const [open, setOpen] = useState(false);
 
   const handleLanguageSelect = (code: string) => {
-    setSelectedLang(code);
+    if (code === 'en' || code === 'ar') {
+      setLanguage(code);
+      setOpen(false);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex items-center gap-1 cursor-pointer">
           <Globe className="h-4 w-4 flex-shrink-0" />
@@ -41,7 +46,10 @@ export default function LanguageSelector() {
             className="flex-1 max-w-[160px] bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white"
           >
             <div className="flex items-center justify-center gap-2 rtl">
-              <span className="text-sm">العربية</span>
+              <span className="text-sm">
+                {languages.find((lang) => lang.code === language)?.name ||
+                  'العربية'}
+              </span>
             </div>
           </Button>
         </div>
@@ -51,15 +59,14 @@ export default function LanguageSelector() {
           <DialogTitle className="text-xl font-semibold">
             Select Your Language
           </DialogTitle>
-          <DialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 text-gray-500 hover:text-gray-700"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-gray-500 hover:text-gray-700"
+            onClick={() => setOpen(false)}
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </DialogHeader>
         <div className="p-6 pt-2">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -70,11 +77,16 @@ export default function LanguageSelector() {
                 className={`
                   px-4 py-2 rounded-md text-sm font-medium transition-colors
                   ${
-                    selectedLang === lang.code
-                      ? "bg-[#6b6291] text-white"
-                      : "bg-[#e6f7f7] text-[#646263] hover:bg-[#c8ad0d]/20"
+                    language === lang.code
+                      ? 'bg-[#6b6291] text-white'
+                      : 'bg-[#e6f7f7] text-[#646263] hover:bg-[#c8ad0d]/20'
                   }
-                  ${["ar", "fa", "ur"].includes(lang.code) ? "rtl" : "ltr"}
+                  ${['ar', 'fa', 'ur'].includes(lang.code) ? 'rtl' : 'ltr'}
+                  ${
+                    lang.code !== 'en' && lang.code !== 'ar'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : ''
+                  }
                 `}
               >
                 {lang.name}

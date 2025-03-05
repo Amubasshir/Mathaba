@@ -1,28 +1,27 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import MainLayout from "@/components/layouts/main-layout"
-import Hero from "@/components/sections/hero"
-import ActionButtons from "@/components/sections/action-buttons"
-import QueryInput from "@/components/sections/query-input"
-import LocationLanguage from "@/components/sections/location-language"
-import Footer from "@/components/sections/footer"
+import MainLayout from '@/components/layouts/main-layout';
+import ActionButtons from '@/components/sections/action-buttons';
+import Chat from '@/components/sections/chat';
+import Footer from '@/components/sections/footer';
+import Hero from '@/components/sections/hero';
+import LocationLanguage from '@/components/sections/location-language';
+import { useState } from 'react';
 
 export default function Home() {
-  const [selectedQuestion, setSelectedQuestion] = useState("")
+  const [selectedQuestion, setSelectedQuestion] = useState('');
 
   const handleQuestionSelect = (question: string) => {
-    setSelectedQuestion(question)
-  }
+    setSelectedQuestion(question);
+  };
 
   return (
     <MainLayout>
       <Hero />
       <LocationLanguage />
       <ActionButtons onQuestionSelect={handleQuestionSelect} />
-      <QueryInput defaultValue={selectedQuestion} />
+      <Chat />
       <Footer />
     </MainLayout>
-  )
+  );
 }
-

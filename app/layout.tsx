@@ -1,32 +1,25 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Cairo } from "next/font/google"
-import "./globals.css"
+import { LanguageProvider } from '@/contexts/language-context';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
-const cairo = Cairo({
-  subsets: ["arabic"],
-  display: "swap",
-  variable: "--font-cairo",
-})
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "AI Assistant",
-  description: "Technical assistant for consultations and smart studies",
-    generator: 'v0.dev'
-}
+  title: 'Mathaba',
+  description: 'Mathaba Research Centers',
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={cairo.className}>{children}</body>
+      <body className={inter.className}>
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
-  )
+  );
 }
-
-
-
-import './globals.css'
