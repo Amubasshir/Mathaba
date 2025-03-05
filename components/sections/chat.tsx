@@ -33,6 +33,8 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
   const [currentTypingIndex, setCurrentTypingIndex] = useState(-1);
 
+  const [textareaHeight, setTextareaHeight] = useState('24px');
+
   // Animate thinking dots
   useEffect(() => {
     if (isLoading) {
@@ -254,6 +256,16 @@ export default function Chat() {
     }
   };
 
+  const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value);
+    // Reset height to auto to get the correct scrollHeight
+    e.target.style.height = 'auto';
+    // Set new height based on scrollHeight, with a maximum of 120px
+    const newHeight = Math.min(e.target.scrollHeight, 120);
+    e.target.style.height = `${newHeight}px`;
+    setTextareaHeight(`${newHeight}px`);
+  };
+
   // Make the function available globally for other components
   useEffect(() => {
     // @ts-ignore - Adding to window for global access
@@ -285,6 +297,16 @@ export default function Chat() {
                   message.role === 'user'
                     ? 'bg-[#6b6291] text-white'
                     : 'bg-white shadow-sm'
+                } ${
+                  index === messages.length - 1 &&
+                  message.role === 'assistant' &&
+                  message.content === 'thinking'
+                    ? 'w-[120px]'
+                    : index === messages.length - 1 &&
+                      message.role === 'assistant' &&
+                      isStreaming
+                    ? 'w-[500px]'
+                    : ''
                 }`}
                 dir={dir}
               >
@@ -330,12 +352,13 @@ export default function Chat() {
                 >
                   <textarea
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={handleTextareaInput}
                     onKeyPress={handleKeyPress}
                     placeholder={t('ask.me')}
-                    className="w-full focus:outline-none resize-none max-h-[120px] min-h-[24px] overflow-y-auto
+                    className="w-full focus:outline-none resize-none overflow-hidden
                       scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400
                       scrollbar-thumb-rounded-full"
+                    style={{ height: textareaHeight }}
                     dir={dir}
                     rows={1}
                     disabled={isLoading}
