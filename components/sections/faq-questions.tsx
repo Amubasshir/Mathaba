@@ -1,6 +1,7 @@
 "use client"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useLanguage } from "@/contexts/language-context";
 
 // FAQ data structure
 const faqCategories = [
@@ -37,21 +38,56 @@ const faqCategories = [
 ]
 
 interface FAQQuestionsProps {
-  onQuestionSelect: (question: string) => void
+  onQuestionSelect: (question: string, answer: string) => void
 }
 
-export default function FAQQuestions({ onQuestionSelect }: FAQQuestionsProps) {
+export default function FAQQuestions() {
+  const { dir, categories, language } = useLanguage();
+  
+  const handleQuestionSelect = (value: string) => {
+    // Find the selected question across all categories
+    for (const category of categories) {
+      const selectedQuestion = category.category.questions.find(
+        (item: any) => item.question[language] === value
+      );
+      if (selectedQuestion) {
+        // Use the global function to handle the question and answer
+        // @ts-ignore - Using window method
+        if (window.handleCategoryQuestionSelect) {
+          window.handleCategoryQuestionSelect(value, selectedQuestion.answer[language]);
+        }
+        break;
+      }
+    }
+  };
+  
   return (
     <>
-      {faqCategories.map((category) => (
-        <Select key={category.id} onValueChange={onQuestionSelect}>
-          <SelectTrigger className="w-full text-right rtl border-[#6b6291]/20">
-            <SelectValue placeholder={category.title} />
+      {categories.map((category: any) => (
+        <Select 
+          key={category.id} 
+          onValueChange={handleQuestionSelect}
+        >
+          <SelectTrigger 
+            className="w-full border-[#6b6291]/20" 
+            dir={dir}
+          >
+            <SelectValue 
+              placeholder={category.category.name[language] || category.category.name.en} 
+              className="block w-full"
+            />
           </SelectTrigger>
-          <SelectContent>
-            {category.questions.map((question, index) => (
-              <SelectItem key={index} value={question} className="text-right rtl">
-                {question}
+          <SelectContent dir={dir}>
+            {category.category.questions.map((item: any, index: number) => (
+              <SelectItem 
+                key={index} 
+                value={item.question[language] || item.question.en}
+                className="w-full"
+                dir={dir}
+              >
+                <span className="block w-full">
+                  {item.question[language] || item.question.en}
+                </span>
               </SelectItem>
             ))}
           </SelectContent>

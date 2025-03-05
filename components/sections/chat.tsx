@@ -22,7 +22,13 @@ export default function Chat() {
   const [error, setError] = useState<string | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { dir, t } = useLanguage();
+  const { dir, t, categories, language } = useLanguage();
+  
+  // Add typewriter effect states
+  const [typingText, setTypingText] = useState('');
+  const [fullText, setFullText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [currentTypingIndex, setCurrentTypingIndex] = useState(-1);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -30,7 +36,29 @@ export default function Chat() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, typingText]);
+
+  // Typewriter effect
+  useEffect(() => {
+    if (isTyping && typingText.length < fullText.length) {
+      const timeout = setTimeout(() => {
+        setTypingText(fullText.slice(0, typingText.length + 1));
+      }, 15); // Speed of typing
+      return () => clearTimeout(timeout);
+    } else if (isTyping && typingText.length === fullText.length) {
+      setIsTyping(false);
+      
+      // Update the message with the full text when typing is complete
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        if (newMessages.length > 0 && currentTypingIndex >= 0) {
+          newMessages[currentTypingIndex].content = fullText;
+        }
+        return newMessages;
+      });
+      setCurrentTypingIndex(-1);
+    }
+  }, [typingText, fullText, isTyping, currentTypingIndex]);
 
   const createThread = async () => {
     try {
@@ -127,7 +155,7 @@ export default function Chat() {
     // Add temporary "thinking" message
     setMessages((prev) => [
       ...prev,
-      { role: 'assistant', content: 'Thinking...' },
+      { role: 'assistant', content: t('thinking') || 'Thinking...' },
     ]);
 
     // Get assistant response
@@ -150,12 +178,42 @@ export default function Chat() {
     setIsLoading(false);
   };
 
+  // Function to handle FAQ question selection
+  const handleCategoryQuestionSelect = (question: string, answer: string) => {
+    if (isLoading) return;
+    
+    setError(null);
+    
+    // Add user message with the selected question
+    const updatedMessages = [...messages, { role: 'user', content: question }];
+    setMessages(updatedMessages);
+    setIsLoading(true);
+    
+    // Add temporary "thinking" message
+    const withThinking = [...updatedMessages, { role: 'assistant', content: t('thinking') || 'Thinking...' }];
+    setMessages(withThinking);
+    
+    // Simulate API delay
+    setTimeout(() => {
+      // Remove "thinking" message and add answer immediately
+      const finalMessages = [...withThinking.slice(0, -1), { role: 'assistant', content: answer }];
+      setMessages(finalMessages);
+      setIsLoading(false);
+    }, 800);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
   };
+
+  // Make the function available globally for other components
+  useEffect(() => {
+    // @ts-ignore - Adding to window for global access
+    window.handleCategoryQuestionSelect = handleCategoryQuestionSelect;
+  }, []);
 
   return (
     <div className="flex flex-col w-full max-w-3xl mx-auto bg-gray-50 min-h-[600px]">
@@ -177,9 +235,12 @@ export default function Chat() {
                   ? 'bg-[#6b6291] text-white'
                   : 'bg-white shadow-sm'
                   }`}
+                dir={dir}
               >
                 <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                  {message.content}
+                  {index === currentTypingIndex && isTyping 
+                    ? typingText 
+                    : message.content}
                 </p>
               </div>
             </div>
