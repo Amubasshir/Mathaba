@@ -24,6 +24,8 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { dir, t, categories, language } = useLanguage();
   const [thinkingDots, setThinkingDots] = useState('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingText, setStreamingText] = useState('');
 
   // Add typewriter effect states
   const [typingText, setTypingText] = useState('');
@@ -150,6 +152,30 @@ export default function Chat() {
     }
   };
 
+  const streamText = (text: string) => {
+    setIsStreaming(true);
+    setStreamingText('');
+    let index = 0;
+
+    const streamInterval = setInterval(() => {
+      if (index < text.length) {
+        setStreamingText(text.substring(0, index + 1));
+        index++;
+      } else {
+        clearInterval(streamInterval);
+        setIsStreaming(false);
+        // Update the last message with complete text
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          if (newMessages.length > 0) {
+            newMessages[newMessages.length - 1].content = text;
+          }
+          return newMessages;
+        });
+      }
+    }, 30); // Adjust speed as needed
+  };
+
   const handleSubmit = async () => {
     if (!inputValue.trim() || isLoading) return;
 
@@ -171,17 +197,18 @@ export default function Chat() {
     // Add temporary "thinking" message
     setMessages((prev) => [
       ...prev,
-      { role: 'assistant', content: t('thinking') || 'Thinking...' },
+      { role: 'assistant', content: t('thinking') || 'thinking' },
     ]);
 
     // Get assistant response
     const response = await sendMessage(content);
 
-    // Remove "thinking" message and add actual response
+    // Remove thinking message and start streaming
     setMessages((prev) => {
-      const newMessages = prev.slice(0, -1); // Remove thinking message
+      const newMessages = prev.slice(0, -1);
       if (response) {
-        newMessages.push({ role: 'assistant', content: response });
+        newMessages.push({ role: 'assistant', content: '' }); // Empty content initially
+        streamText(response); // Start streaming the response
       } else {
         newMessages.push({
           role: 'assistant',
@@ -194,35 +221,28 @@ export default function Chat() {
     setIsLoading(false);
   };
 
-  // Function to handle FAQ question selection
+  // Modify handleCategoryQuestionSelect to use streaming
   const handleCategoryQuestionSelect = (question: string, answer: string) => {
     if (isLoading) return;
 
     setError(null);
-
-    // Add user message with the selected question
-    const updatedMessages: Message[] = [
-      ...messages,
-      { role: 'user' as const, content: question },
-    ];
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, { role: 'user', content: question }]);
     setIsLoading(true);
 
     // Add temporary "thinking" message
-    const withThinking: Message[] = [
-      ...updatedMessages,
-      { role: 'assistant' as const, content: t('thinking') || 'Thinking...' },
-    ];
-    setMessages(withThinking);
+    setMessages((prev) => [
+      ...prev,
+      { role: 'assistant', content: t('thinking') || 'thinking' },
+    ]);
 
-    // Simulate API delay
+    // Simulate API delay then stream
     setTimeout(() => {
-      // Remove "thinking" message and add answer immediately
-      const finalMessages: Message[] = [
-        ...withThinking.slice(0, -1),
-        { role: 'assistant' as const, content: answer },
-      ];
-      setMessages(finalMessages);
+      setMessages((prev) => {
+        const newMessages = prev.slice(0, -1);
+        newMessages.push({ role: 'assistant', content: '' });
+        return newMessages;
+      });
+      streamText(answer);
       setIsLoading(false);
     }, 800);
   };
@@ -271,12 +291,16 @@ export default function Chat() {
                 {index === messages.length - 1 &&
                 message.role === 'assistant' &&
                 message.content === 'thinking' ? (
-                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap min-w-[70px]">
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap min-w-[85px]">
                     thinking{thinkingDots}
                   </p>
                 ) : (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                    {message.content}
+                    {index === messages.length - 1 &&
+                    message.role === 'assistant' &&
+                    isStreaming
+                      ? streamingText
+                      : message.content}
                   </p>
                 )}
               </div>
