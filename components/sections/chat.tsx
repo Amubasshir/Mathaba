@@ -23,7 +23,7 @@ export default function Chat() {
   const [threadId, setThreadId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { dir, t, categories, language } = useLanguage();
-  
+
   // Add typewriter effect states
   const [typingText, setTypingText] = useState('');
   const [fullText, setFullText] = useState('');
@@ -47,7 +47,7 @@ export default function Chat() {
       return () => clearTimeout(timeout);
     } else if (isTyping && typingText.length === fullText.length) {
       setIsTyping(false);
-      
+
       // Update the message with the full text when typing is complete
       setMessages((prev) => {
         const newMessages = [...prev];
@@ -106,7 +106,7 @@ export default function Chat() {
       let newThreadId = threadId;
       if (!newThreadId) {
         newThreadId = await createThread();
-        setThreadId(newThreadId)
+        setThreadId(newThreadId);
         if (!newThreadId) return;
       }
 
@@ -181,22 +181,31 @@ export default function Chat() {
   // Function to handle FAQ question selection
   const handleCategoryQuestionSelect = (question: string, answer: string) => {
     if (isLoading) return;
-    
+
     setError(null);
-    
+
     // Add user message with the selected question
-    const updatedMessages = [...messages, { role: 'user', content: question }];
+    const updatedMessages: Message[] = [
+      ...messages,
+      { role: 'user' as const, content: question },
+    ];
     setMessages(updatedMessages);
     setIsLoading(true);
-    
+
     // Add temporary "thinking" message
-    const withThinking = [...updatedMessages, { role: 'assistant', content: t('thinking') || 'Thinking...' }];
+    const withThinking: Message[] = [
+      ...updatedMessages,
+      { role: 'assistant' as const, content: t('thinking') || 'Thinking...' },
+    ];
     setMessages(withThinking);
-    
+
     // Simulate API delay
     setTimeout(() => {
       // Remove "thinking" message and add answer immediately
-      const finalMessages = [...withThinking.slice(0, -1), { role: 'assistant', content: answer }];
+      const finalMessages: Message[] = [
+        ...withThinking.slice(0, -1),
+        { role: 'assistant' as const, content: answer },
+      ];
       setMessages(finalMessages);
       setIsLoading(false);
     }, 800);
@@ -216,30 +225,36 @@ export default function Chat() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full max-w-3xl mx-auto bg-gray-50 min-h-[600px]">
+    <div
+      className={`flex flex-col w-full max-w-3xl mx-auto ${
+        messages.length > 0 ? 'bg-gray-50' : ''
+      }`}
+    >
       {/* Messages Container */}
       {messages.length > 0 && (
         <div
-          className="flex-1 p-6 space-y-6 overflow-y-auto
+          className="flex-1 p-6 space-y-6 overflow-y-auto min-h-[400px]
         scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400
         scrollbar-thumb-rounded"
         >
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
+              className={`flex ${
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
             >
               <div
-                className={`max-w-[80%] p-4 rounded-[20px] ${message.role === 'user'
-                  ? 'bg-[#6b6291] text-white'
-                  : 'bg-white shadow-sm'
-                  }`}
+                className={`max-w-[80%] p-4 rounded-[20px] ${
+                  message.role === 'user'
+                    ? 'bg-[#6b6291] text-white'
+                    : 'bg-white shadow-sm'
+                }`}
                 dir={dir}
               >
                 <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                  {index === currentTypingIndex && isTyping 
-                    ? typingText 
+                  {index === currentTypingIndex && isTyping
+                    ? typingText
                     : message.content}
                 </p>
               </div>
@@ -263,8 +278,9 @@ export default function Chat() {
             <div className="relative flex items-center rounded-lg border border-gray-200">
               <div className="flex-1 px-4 py-3">
                 <div
-                  className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
-                    } items-center gap-2 text-gray-600`}
+                  className={`flex ${
+                    dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
+                  } items-center gap-2 text-gray-600`}
                 >
                   <textarea
                     value={inputValue}
