@@ -23,12 +23,28 @@ export default function Chat() {
   const [threadId, setThreadId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { dir, t, categories, language } = useLanguage();
+  const [thinkingDots, setThinkingDots] = useState('');
 
   // Add typewriter effect states
   const [typingText, setTypingText] = useState('');
   const [fullText, setFullText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [currentTypingIndex, setCurrentTypingIndex] = useState(-1);
+
+  // Animate thinking dots
+  useEffect(() => {
+    if (isLoading) {
+      const interval = setInterval(() => {
+        setThinkingDots((prev) => {
+          if (prev === '...') return '';
+          return prev + '.';
+        });
+      }, 500);
+      return () => clearInterval(interval);
+    } else {
+      setThinkingDots('');
+    }
+  }, [isLoading]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -252,11 +268,17 @@ export default function Chat() {
                 }`}
                 dir={dir}
               >
-                <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                  {index === currentTypingIndex && isTyping
-                    ? typingText
-                    : message.content}
-                </p>
+                {index === messages.length - 1 &&
+                message.role === 'assistant' &&
+                message.content === 'thinking' ? (
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap min-w-[70px]">
+                    thinking{thinkingDots}
+                  </p>
+                ) : (
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                    {message.content}
+                  </p>
+                )}
               </div>
             </div>
           ))}
