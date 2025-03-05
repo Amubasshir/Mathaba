@@ -75,8 +75,10 @@ export default function Chat() {
 
   const sendMessage = async (content: string) => {
     try {
-      if (!threadId) {
-        const newThreadId = await createThread();
+      let newThreadId = threadId;
+      if (!newThreadId) {
+        newThreadId = await createThread();
+        setThreadId(newThreadId)
         if (!newThreadId) return;
       }
 
@@ -86,7 +88,7 @@ export default function Chat() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          threadId,
+          threadId: newThreadId,
           content,
           assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
         }),
@@ -167,16 +169,14 @@ export default function Chat() {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'
+                }`}
             >
               <div
-                className={`max-w-[80%] p-4 rounded-[20px] ${
-                  message.role === 'user'
-                    ? 'bg-[#6b6291] text-white'
-                    : 'bg-white shadow-sm'
-                }`}
+                className={`max-w-[80%] p-4 rounded-[20px] ${message.role === 'user'
+                  ? 'bg-[#6b6291] text-white'
+                  : 'bg-white shadow-sm'
+                  }`}
               >
                 <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
                   {message.content}
@@ -202,9 +202,8 @@ export default function Chat() {
             <div className="relative flex items-center rounded-lg border border-gray-200">
               <div className="flex-1 px-4 py-3">
                 <div
-                  className={`flex ${
-                    dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
-                  } items-center gap-2 text-gray-600`}
+                  className={`flex ${dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
+                    } items-center gap-2 text-gray-600`}
                 >
                   <textarea
                     value={inputValue}
