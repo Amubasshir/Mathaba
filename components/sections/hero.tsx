@@ -20,7 +20,7 @@ export default function Hero() {
           className="object-contain"
         />
       </div>
-      <p className={`text-[#646263] text-center text-lg font-medium mb-4 ${language === 'en' ? 'ltr' : 'rtl'}`}>
+      <p className={`text-[#646263] text-center text-lg font-medium mb-4 ${language === 'en' ? 'ltr whitespace-nowrap' : 'rtl'}`}>
         {language === 'en' ? heroText.en : heroText.ar}
       </p>
     </div>
