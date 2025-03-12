@@ -426,43 +426,46 @@ export default function Chat() {
 
       {/* Input Container */}
       <div className=" border-t sticky bottom-0 z-10">
-        <div className="relative flex items-center p-0 my-24">
+        <div className="relative flex items-center p-0 py-4 bg-gray-50">
           <div className="relative w-full rounded-xl">
             {/* <div className="relative flex items-center rounded-lg border border-gray-200"> */}
-              <div className="flex-1 px-4 py-3 rounded-full bg-white"
-                  style={{boxShadow: "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px"}}
+            <div
+              className="flex-1 px-4 py-3 rounded-full bg-white"
+              style={{
+                boxShadow:
+                  'rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px',
+              }}
+            >
+              <div
+                className={`flex ${
+                  dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
+                } items-center gap-2 text-gray-600`}
               >
-                <div
-                  className={`flex ${
-                    dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
-                  } items-center gap-2 text-gray-600`}
-                >
-                  <textarea
-                  
-                    value={inputValue}
-                    onChange={handleTextareaInput}
-                    onKeyPress={handleKeyPress}
-                    placeholder={t('ask.me')}
-                    className="w-full focus:outline-none resize-none overflow-hidden
+                <textarea
+                  value={inputValue}
+                  onChange={handleTextareaInput}
+                  onKeyPress={handleKeyPress}
+                  placeholder={t('ask.me')}
+                  className="w-full focus:outline-none resize-none overflow-hidden
                       scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400
                       scrollbar-thumb-rounded-full bg-transparent"
-                    style={{ height: textareaHeight }}
-                    dir={dir}
-                    rows={1}
-                    disabled={isLoading}
-                  />
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 text-gray-400 hover:text-[#6b6291]"
-                    onClick={handleSubmit}
-                    disabled={isLoading || !inputValue.trim()}
-                  >
-                    <Send className="h-5 w-5" />
-                    <span className="sr-only">Send</span>
-                  </Button>
-                </div>
+                  style={{ height: textareaHeight }}
+                  dir={dir}
+                  rows={1}
+                  disabled={isLoading}
+                />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8 text-gray-400 hover:text-[#6b6291]"
+                  onClick={handleSubmit}
+                  disabled={isLoading || !inputValue.trim()}
+                >
+                  <Send className="h-5 w-5" />
+                  <span className="sr-only">Send</span>
+                </Button>
               </div>
+            </div>
             {/* </div> */}
           </div>
         </div>
