@@ -40,12 +40,12 @@ export default function LanguageSelector() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="flex items-center gap-1 cursor-pointer">
-          <Globe className="h-4 w-4 flex-shrink-0" />
           <Button
             variant="custom"
-            className="flex-1 max-w-[160px] bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white"
+            className="flex-1 max-w-[160px] gap-1.5 bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white"
           >
             <div className="flex items-center justify-center gap-2 rtl">
+              <Globe className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm">
                 {languages.find((lang) => lang.code === language)?.name ||
                   'العربية'}

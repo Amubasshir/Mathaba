@@ -84,7 +84,7 @@ export default function FAQQuestions({ onQuestionSelect }: FAQQuestionsProps) {
     <>
       {categories.map((category: any) => (
         <Select key={category.id} onValueChange={handleQuestionSelect}>
-          <SelectTrigger className="w-full border-[#6b6291]/20" dir={dir}>
+          <SelectTrigger className="w-full border-[#6b6291]/20 border-none rounded-full" dir={dir} style={{boxShadow: "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px"}}>
             <SelectValue
               placeholder={
                 category.category.name[language] || category.category.name.en

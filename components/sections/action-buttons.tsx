@@ -64,7 +64,7 @@ export default function ActionButtons({
       <div>
         <Button
           variant="primary"
-          className="bg-[#6b6291] hover:bg-[#6b6291]/90 text-white py-6 w-full rounded-[12px]"
+          className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-full"
           onClick={handleFAQClick}
         >
           {buttonText.faq}
@@ -80,7 +80,7 @@ export default function ActionButtons({
       <div>
         <Button
           variant="primary"
-          className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-[12px]"
+          className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-full"
           onClick={handleGuidesClick}
         >
           {buttonText.guides}
@@ -90,7 +90,8 @@ export default function ActionButtons({
             {guideButtons.map((guide) => (
               <button
                 key={guide.id}
-                className="w-full px-4 py-3 text-sm bg-white border border-[#c8ad0d] rounded-md shadow-sm hover:bg-accent hover:text-accent-foreground"
+                className="w-full px-4 py-3 text-sm bg-white rounded-full shadow-sm hover:bg-accent hover:text-accent-foreground "
+                style={{boxShadow: "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px"}}
                 onClick={() => handleGuideClick(guide.url)}
               >
                 {guide.text}

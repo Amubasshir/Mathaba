@@ -13,12 +13,12 @@ export default function LocationLanguage() {
       <LanguageSelector />
 
       <div className="flex items-center gap-1 cursor-pointer">
-        <MapPin className="h-4 w-4 flex-shrink-0" />
         <Button
           variant="custom"
-          className="flex-1 max-w-[160px] bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-[1px]"
+          className="flex-1 max-w-[160px] gap-1.5 bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-[1px]"
         >
           <div className={`flex items-center justify-center gap-2 ${dir}`}>
+          <MapPin className="h-4 w-4 flex-shrink-0" />
             <span className="text-sm">{t('research.centers')}</span>
           </div>
         </Button>
