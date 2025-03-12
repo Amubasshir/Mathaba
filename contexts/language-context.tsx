@@ -37,12 +37,12 @@ type Question = {
 
 const translations = {
   en: {
-    'research.centers': 'Research Centers',
+    'research.centers': 'Locations',
     'ask.me': 'Ask me',
     // Add more translations as needed
   },
   ar: {
-    'research.centers': 'المراكز البحثية',
+    'research.centers': 'المواقع',
     'ask.me': 'اسألني',
     // Add more translations as needed
   },

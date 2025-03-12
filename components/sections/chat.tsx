@@ -360,7 +360,7 @@ export default function Chat() {
   return (
     <div
       className={`flex flex-col w-full max-w-3xl mx-auto ${
-        messages.length > 0 ? 'bg-gray-50' : ''
+        messages.length > 0 ? 'bg-transparent' : ''
       }`}
     >
       {/* Messages Container */}
@@ -368,7 +368,7 @@ export default function Chat() {
         <div
           className="flex-1 p-6 space-y-6 overflow-y-auto min-h-[400px]
         scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400
-        scrollbar-thumb-rounded"
+        scrollbar-thumb-rounded bg-gray-50"
         >
           {messages.map((message, index) => (
             <div
@@ -425,11 +425,11 @@ export default function Chat() {
       )}
 
       {/* Input Container */}
-      <div className="bg-white border-t sticky bottom-0 z-10">
-        <div className="relative flex items-center p-0 my-4">
+      <div className=" border-t sticky bottom-0 z-10">
+        <div className="relative flex items-center p-0 my-24">
           <div className="relative w-full rounded-xl">
             {/* <div className="relative flex items-center rounded-lg border border-gray-200"> */}
-              <div className="flex-1 px-4 py-3 rounded-full"
+              <div className="flex-1 px-4 py-3 rounded-full bg-white"
                   style={{boxShadow: "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px"}}
               >
                 <div

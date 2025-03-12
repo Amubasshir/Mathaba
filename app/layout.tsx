@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={inter.className}>
+      <body className={`${inter.className} main-body`}>
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
