@@ -163,8 +163,13 @@ export default function Chat({
   };
 
   const streamText = (text: string, userInput: string) => {
-    // Remove ** characters from the text
-    const cleanText = text.replace(/\*\*/g, '');
+    // Remove ** characters and source references from the text
+    const cleanText = text
+      .replace(/\*\*/g, '')
+      .replace(/\[source'\d+:\d+\]/g, '')
+      .replace(/\【source'\d+:\d+\】/g, '')
+      .replace(/\(source'\d+:\d+\)/g, '')
+      .trim();
 
     setIsStreaming(true);
     setStreamingText('');
