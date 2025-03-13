@@ -50,14 +50,14 @@ export default function ActionButtons({
   ];
 
   useEffect(() => {
-    if(isManualChat){
-        setShowFAQ(false);
-        setShowRedirectButtons(false);
+    if (isManualChat) {
+      setShowFAQ(false);
+      setShowRedirectButtons(false);
     }
-    if(showFAQ || showRedirectButtons){
-        setIsManualChat(false);
+    if (showFAQ || showRedirectButtons) {
+      setIsManualChat(false);
     }
-  }, [isManualChat, showFAQ, showRedirectButtons])
+  }, [isManualChat, showFAQ, showRedirectButtons]);
 
   const handleGuideClick = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -105,7 +105,10 @@ export default function ActionButtons({
               <button
                 key={guide.id}
                 className="w-full px-4 py-3 text-sm bg-white rounded-full shadow-sm hover:bg-accent hover:text-accent-foreground "
-                style={{boxShadow: "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px"}}
+                style={{
+                  boxShadow:
+                    'rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px',
+                }}
                 onClick={() => handleGuideClick(guide.url)}
               >
                 {guide.text}
