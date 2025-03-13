@@ -163,13 +163,16 @@ export default function Chat({
   };
 
   const streamText = (text: string, userInput: string) => {
+    // Remove ** characters from the text
+    const cleanText = text.replace(/\*\*/g, '');
+
     setIsStreaming(true);
     setStreamingText('');
     let index = 0;
 
     const streamInterval = setInterval(() => {
-      if (index < text.length) {
-        setStreamingText(text.substring(0, index + 1));
+      if (index < cleanText.length) {
+        setStreamingText(cleanText.substring(0, index + 1));
         index++;
       } else {
         clearInterval(streamInterval);
@@ -178,12 +181,12 @@ export default function Chat({
         setMessages((prev) => {
           const newMessages = [...prev];
           if (newMessages.length > 0) {
-            newMessages[newMessages.length - 1].content = text;
+            newMessages[newMessages.length - 1].content = cleanText;
           }
           return newMessages;
         });
         // Store interaction only after streaming is complete
-        storeInteraction(userInput, text);
+        storeInteraction(userInput, cleanText);
       }
     }, 30);
   };
