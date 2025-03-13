@@ -15,7 +15,7 @@ interface Thread {
   messages: Message[];
 }
 
-export default function Chat() {
+export default function Chat({setIsManualChat}:{setIsManualChat:(isManualChat: boolean)=>void}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -342,6 +342,9 @@ export default function Chat() {
   };
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if(e.target.value){
+        setIsManualChat(true);
+    }
     setInputValue(e.target.value);
     // Reset height to auto to get the correct scrollHeight
     e.target.style.height = 'auto';
@@ -366,7 +369,7 @@ export default function Chat() {
       {/* Messages Container */}
       {messages.length > 0 && (
         <div
-          className="flex-1 p-6 space-y-6 overflow-y-auto min-h-[400px]
+          className="flex-1 p-6 space-y-6 h-full max-h-[50vh] overflow-y-auto
         scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400
         scrollbar-thumb-rounded bg-gray-50"
         >
@@ -415,7 +418,7 @@ export default function Chat() {
           ))}
           <div ref={messagesEndRef} />
         </div>
-      )}
+     )}
 
       {/* Error Message */}
       {error && (
@@ -425,8 +428,8 @@ export default function Chat() {
       )}
 
       {/* Input Container */}
-      <div className=" border-t sticky bottom-0 z-10">
-        <div className="relative flex items-center p-0 py-4 bg-gray-50">
+      <div className="sticky bottom-0 z-10 bg-white">
+        <div className="relative flex items-center p-0 py-4">
           <div className="relative w-full rounded-xl">
             {/* <div className="relative flex items-center rounded-lg border border-gray-200"> */}
             <div

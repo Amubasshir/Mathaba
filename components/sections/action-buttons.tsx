@@ -2,15 +2,19 @@
 
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/language-context';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FAQQuestions from './faq-questions';
 
 interface ActionButtonsProps {
   onQuestionSelect: (question: string) => void;
+  isManualChat: boolean;
+  setIsManualChat: (isManualChat: boolean) => void;
 }
 
 export default function ActionButtons({
   onQuestionSelect,
+  isManualChat,
+  setIsManualChat,
 }: ActionButtonsProps) {
   const [showFAQ, setShowFAQ] = useState(false);
   const [showRedirectButtons, setShowRedirectButtons] = useState(false);
@@ -44,6 +48,16 @@ export default function ActionButtons({
       url: 'https://drive.google.com/file/d/1xhcdljVbFZQo45UQ2JbeDJFuL67prXOl/view',
     },
   ];
+
+  useEffect(() => {
+    if(isManualChat){
+        setShowFAQ(false);
+        setShowRedirectButtons(false);
+    }
+    if(showFAQ || showRedirectButtons){
+        setIsManualChat(false);
+    }
+  }, [isManualChat, showFAQ, showRedirectButtons])
 
   const handleGuideClick = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');

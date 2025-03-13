@@ -10,6 +10,7 @@ import { useState } from 'react';
 
 export default function Home() {
   const [selectedQuestion, setSelectedQuestion] = useState('');
+  const [isManualChat, setIsManualChat] = useState(false);
 
   const handleQuestionSelect = (question: string) => {
     setSelectedQuestion(question);
@@ -19,8 +20,8 @@ export default function Home() {
     <MainLayout>
       <Hero />
       <LocationLanguage />
-      <ActionButtons onQuestionSelect={handleQuestionSelect} />
-      <Chat />
+      <ActionButtons onQuestionSelect={handleQuestionSelect} isManualChat={isManualChat} setIsManualChat={setIsManualChat} />
+      <Chat setIsManualChat={setIsManualChat} />
       <Footer />
     </MainLayout>
   );
