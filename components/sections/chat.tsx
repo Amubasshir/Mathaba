@@ -15,7 +15,11 @@ interface Thread {
   messages: Message[];
 }
 
-export default function Chat({setIsManualChat}:{setIsManualChat:(isManualChat: boolean)=>void}) {
+export default function Chat({
+  setIsManualChat,
+}: {
+  setIsManualChat: (isManualChat: boolean) => void;
+}) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -342,8 +346,8 @@ export default function Chat({setIsManualChat}:{setIsManualChat:(isManualChat: b
   };
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if(e.target.value){
-        setIsManualChat(true);
+    if (e.target.value) {
+      setIsManualChat(true);
     }
     setInputValue(e.target.value);
     // Reset height to auto to get the correct scrollHeight
@@ -402,7 +406,7 @@ export default function Chat({setIsManualChat}:{setIsManualChat:(isManualChat: b
                 message.role === 'assistant' &&
                 message.content === 'thinking' ? (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap min-w-[85px]">
-                    thinking{thinkingDots}
+                    Thinking{thinkingDots}
                   </p>
                 ) : (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
@@ -418,7 +422,7 @@ export default function Chat({setIsManualChat}:{setIsManualChat:(isManualChat: b
           ))}
           <div ref={messagesEndRef} />
         </div>
-     )}
+      )}
 
       {/* Error Message */}
       {error && (
