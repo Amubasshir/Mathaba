@@ -372,6 +372,30 @@ export default function Chat({
     window.handleCategoryQuestionSelect = handleCategoryQuestionSelect;
   }, []);
 
+  const linkifyText = (text: string) => {
+    // URL regex pattern
+    const urlPattern = /(https?:\/\/[^\s]+)/g;
+
+    // Split text by URLs and map each part
+    const parts = text.split(urlPattern);
+    return parts.map((part, index) => {
+      if (part.match(urlPattern)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   return (
     <div
       className={`flex flex-col w-full max-w-3xl mx-auto ${
@@ -421,8 +445,8 @@ export default function Chat({
                     {index === messages.length - 1 &&
                     message.role === 'assistant' &&
                     isStreaming
-                      ? streamingText
-                      : message.content}
+                      ? linkifyText(streamingText)
+                      : linkifyText(message.content)}
                   </p>
                 )}
               </div>
