@@ -94,6 +94,24 @@ export async function POST(req: Request) {
   try {
     const { threadId, content, assistantId, toolCallId } = await req.json();
 
+    // First, check moderation for non-tool-call messages
+    if (!toolCallId) {
+      console.log('Checking content moderation...');
+      const moderationResponse = await openai.moderations.create({
+        input: content,
+      });
+
+      const results = moderationResponse.results[0];
+      if (results.flagged) {
+        console.log('Content flagged by moderation:', results.categories);
+        return NextResponse.json(
+          { error: 'This message contains inappropriate content' },
+          { status: 400 }
+        );
+      }
+      console.log('Content passed moderation check');
+    }
+
     // Handle tool call responses
     if (toolCallId) {
       try {
@@ -192,15 +210,20 @@ export async function POST(req: Request) {
           const searchTimeout = setTimeout(
             () => searchController.abort(),
             10000
-          ); // 10s timeout for search
+          );
 
           try {
+            // Enhance search query for weather-specific results
+            const enhancedQuery = searchQuery.includes('weather')
+              ? `${searchQuery} site:weather.com OR site:accuweather.com OR site:weatherapi.com current conditions`
+              : searchQuery;
+
             const searchResponse = await fetch(
               `https://www.googleapis.com/customsearch/v1?key=${
                 process.env.GOOGLE_SEARCH_API_KEY
               }&cx=${process.env.GOOGLE_SEARCH_CX}&q=${encodeURIComponent(
-                searchQuery
-              )}`,
+                enhancedQuery
+              )}&dateRestrict=d1`, // Restrict to last 24 hours
               { signal: searchController.signal }
             );
 
@@ -214,7 +237,32 @@ export async function POST(req: Request) {
 
             const searchData = await searchResponse.json();
 
-            // Submit the search results back to the assistant
+            // Define types for search results
+            interface SearchItem {
+              link: string;
+              snippet: string;
+              pagemap?: {
+                metatags?: Array<{
+                  'og:description'?: string;
+                }>;
+              };
+            }
+
+            // Process search results to ensure valid URLs and recent content
+            const processedData = {
+              ...searchData,
+              items: searchData.items?.map((item: SearchItem) => ({
+                ...item,
+                // Clean up URLs by removing tracking parameters
+                link: item.link.split('?')[0],
+                // Ensure snippet is relevant and recent
+                snippet:
+                  item.snippet +
+                  (item.pagemap?.metatags?.[0]?.['og:description'] || ''),
+              })),
+            };
+
+            // Submit the processed search results back to the assistant
             const submitResponse =
               await openai.beta.threads.runs.submitToolOutputs(
                 threadId,
@@ -223,7 +271,7 @@ export async function POST(req: Request) {
                   tool_outputs: [
                     {
                       tool_call_id: toolCalls[0].id,
-                      output: JSON.stringify(searchData),
+                      output: JSON.stringify(processedData),
                     },
                   ],
                 }

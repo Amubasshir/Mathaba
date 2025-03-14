@@ -489,7 +489,7 @@ export default function Chat({
                   index === messages.length - 1 &&
                   message.role === 'assistant' &&
                   message.content === 'thinking'
-                    ? 'w-[120px]'
+                    ? 'w-[60px]'
                     : index === messages.length - 1 &&
                       message.role === 'assistant' &&
                       isStreaming
@@ -501,9 +501,11 @@ export default function Chat({
                 {index === messages.length - 1 &&
                 message.role === 'assistant' &&
                 message.content === 'thinking' ? (
-                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap min-w-[85px]">
-                    {thinkingDots}
-                  </p>
+                  <div className="w-[32px] h-[20px] flex items-center justify-center mx-auto">
+                    <span className="inline-block min-w-[32px] text-center">
+                      {thinkingDots}
+                    </span>
+                  </div>
                 ) : (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
                     {index === messages.length - 1 &&
