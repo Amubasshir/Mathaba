@@ -7,11 +7,9 @@ const openai = new OpenAI({
 
 export async function POST() {
   try {
+    // Create a new thread
     const thread = await openai.beta.threads.create();
-
-    return NextResponse.json({
-      threadId: thread.id,
-    });
+    return NextResponse.json({ threadId: thread.id });
   } catch (error) {
     console.error('Thread creation error:', error);
     return NextResponse.json(

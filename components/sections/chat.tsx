@@ -147,6 +147,25 @@ export default function Chat({
           threadId: newThreadId,
           content,
           assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+          tools: [
+            {
+              type: 'function',
+              function: {
+                name: 'search_web',
+                description: 'Search the web for real-time information',
+                parameters: {
+                  type: 'object',
+                  properties: {
+                    query: {
+                      type: 'string',
+                      description: 'The search query',
+                    },
+                  },
+                  required: ['query'],
+                },
+              },
+            },
+          ],
         }),
       });
 
@@ -155,6 +174,51 @@ export default function Chat({
       }
 
       const data = await response.json();
+
+      // If the response includes a tool call
+      if (data.toolCalls && data.toolCalls.length > 0) {
+        const toolCall = data.toolCalls[0];
+        if (toolCall.function.name === 'search_web') {
+          const searchQuery = JSON.parse(toolCall.function.arguments).query;
+
+          // Make the web search request
+          const searchResponse = await fetch('/api/search', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: searchQuery }),
+          });
+
+          if (!searchResponse.ok) {
+            throw new Error('Failed to perform web search');
+          }
+
+          const searchResults = await searchResponse.json();
+
+          // Send the search results back to continue the conversation
+          const finalResponse = await fetch('/api/chat/message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              threadId: newThreadId,
+              content: JSON.stringify(searchResults),
+              assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+              toolCallId: toolCall.id,
+            }),
+          });
+
+          if (!finalResponse.ok) {
+            throw new Error('Failed to process search results');
+          }
+
+          const finalData = await finalResponse.json();
+          return finalData.message;
+        }
+      }
+
       return data.message;
     } catch (err) {
       setError('Failed to send message');
@@ -438,7 +502,7 @@ export default function Chat({
                 message.role === 'assistant' &&
                 message.content === 'thinking' ? (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap min-w-[85px]">
-                    Thinking{thinkingDots}
+                    {thinkingDots}
                   </p>
                 ) : (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
