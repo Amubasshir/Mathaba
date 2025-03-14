@@ -437,27 +437,47 @@ export default function Chat({
   }, []);
 
   const linkifyText = (text: string) => {
-    // URL regex pattern
-    const urlPattern = /(https?:\/\/[^\s]+)/g;
+    // Updated URL regex pattern to better handle URLs with parentheses
+    const urlPattern = /\[([^\]]+)\]\((https?:\/\/[^)]+)\)|https?:\/\/[^\s)]+/g;
 
     // Split text by URLs and map each part
-    const parts = text.split(urlPattern);
-    return parts.map((part, index) => {
-      if (part.match(urlPattern)) {
-        return (
-          <a
-            key={index}
-            href={part}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 underline break-all"
-          >
-            {part}
-          </a>
-        );
-      }
-      return <span key={index}>{part}</span>;
-    });
+    return text
+      .split(/(\[[^\]]+\]\([^)]+\)|https?:\/\/[^\s)]+)/)
+      .map((part, index) => {
+        // Check if it's a markdown link [text](url)
+        const markdownMatch = part.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
+        if (markdownMatch) {
+          const [_, text, url] = markdownMatch;
+          return (
+            <a
+              key={index}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline break-all"
+            >
+              {text}
+            </a>
+          );
+        }
+
+        // Check if it's a plain URL
+        if (part.match(/^https?:\/\/[^\s)]+$/)) {
+          return (
+            <a
+              key={index}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline break-all"
+            >
+              {part}
+            </a>
+          );
+        }
+
+        return <span key={index}>{part}</span>;
+      });
   };
 
   return (
