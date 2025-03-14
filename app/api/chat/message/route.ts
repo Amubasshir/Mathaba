@@ -1,39 +1,47 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
+// Add Edge Runtime
+export const runtime = 'edge';
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  maxRetries: 3,
-  timeout: 60000, // 60 seconds timeout
+  maxRetries: 2,
+  timeout: 30000, // 30 seconds timeout
 });
 
 // Function to wait for a short period
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Function to check if a thread has any active runs
+// Function to check if a thread has any active runs with timeout
 async function getActiveRun(threadId: string) {
-  const runs = await openai.beta.threads.runs.list(threadId);
-  return runs.data.find(
-    (run) =>
-      run.status === 'in_progress' ||
-      run.status === 'queued' ||
-      run.status === 'requires_action'
-  );
+  try {
+    const runs = await openai.beta.threads.runs.list(threadId);
+    return runs.data.find(
+      (run) =>
+        run.status === 'in_progress' ||
+        run.status === 'queued' ||
+        run.status === 'requires_action'
+    );
+  } catch (error) {
+    console.error('Error checking active runs:', error);
+    return null;
+  }
 }
 
-// Function to safely cancel a run and wait for cancellation
+// Function to safely cancel a run with timeout
 async function safelyCancelRun(threadId: string, runId: string) {
   try {
     await openai.beta.threads.runs.cancel(threadId, runId);
 
     // Wait and verify the run is cancelled
-    let maxAttempts = 5;
+    let maxAttempts = 3;
     while (maxAttempts > 0) {
       const run = await openai.beta.threads.runs.retrieve(threadId, runId);
       if (run.status === 'cancelled') {
         return true;
       }
-      await wait(1000);
+      await wait(500); // Reduced wait time
       maxAttempts--;
     }
     return false;
@@ -43,9 +51,9 @@ async function safelyCancelRun(threadId: string, runId: string) {
   }
 }
 
-// Function to ensure thread is ready for new messages
+// Function to ensure thread is ready with timeout
 async function ensureThreadReady(threadId: string) {
-  let attempts = 5;
+  let attempts = 3;
   while (attempts > 0) {
     const activeRun = await getActiveRun(threadId);
     if (!activeRun) {
@@ -56,12 +64,10 @@ async function ensureThreadReady(threadId: string) {
       await safelyCancelRun(threadId, activeRun.id);
     }
 
-    await wait(1000);
+    await wait(500); // Reduced wait time
     attempts--;
   }
-  throw new Error(
-    'Could not prepare thread for new message after multiple attempts'
-  );
+  throw new Error('Could not prepare thread for new message');
 }
 
 // Function to check and handle active runs
@@ -91,6 +97,9 @@ async function handleActiveRuns(threadId: string) {
 }
 
 export async function POST(req: Request) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout
+
   try {
     const { threadId, content, assistantId, toolCallId } = await req.json();
 
@@ -115,7 +124,6 @@ export async function POST(req: Request) {
     // Handle tool call responses
     if (toolCallId) {
       try {
-        // Ensure no other runs are active before submitting tool outputs
         await ensureThreadReady(threadId);
 
         const run = await openai.beta.threads.runs.submitToolOutputs(
@@ -134,6 +142,8 @@ export async function POST(req: Request) {
         let completedRun = await waitForRunCompletion(threadId, run.id);
         const messages = await openai.beta.threads.messages.list(threadId);
         const lastMessageContent = messages.data[0].content[0];
+
+        clearTimeout(timeoutId);
         return NextResponse.json({
           message:
             lastMessageContent.type === 'text'
@@ -149,7 +159,7 @@ export async function POST(req: Request) {
     // For new messages, ensure thread is ready
     await ensureThreadReady(threadId);
 
-    // Create the message only after ensuring thread is ready
+    // Create the message
     try {
       await openai.beta.threads.messages.create(threadId, {
         role: 'user',
@@ -163,7 +173,7 @@ export async function POST(req: Request) {
     // Small wait to ensure message is processed
     await wait(500);
 
-    // Create a new run
+    // Create a new run with reduced timeout
     let run;
     try {
       run = await openai.beta.threads.runs.create(threadId, {
@@ -193,7 +203,7 @@ export async function POST(req: Request) {
       throw error;
     }
 
-    // Wait for the run to complete with increased timeout
+    // Wait for run completion with timeout
     let completedRun = await waitForRunCompletion(threadId, run.id);
 
     // If there are tool calls, handle them
@@ -304,12 +314,23 @@ export async function POST(req: Request) {
     // Get the latest message
     const messages = await openai.beta.threads.messages.list(threadId);
     const lastMessageContent = messages.data[0].content[0];
+    clearTimeout(timeoutId);
     return NextResponse.json({
       message:
         lastMessageContent.type === 'text' ? lastMessageContent.text.value : '',
     });
   } catch (error: any) {
+    clearTimeout(timeoutId);
     console.error('Error in chat message route:', error);
+
+    // Check if it's an abort error
+    if (error.name === 'AbortError') {
+      return NextResponse.json(
+        { error: 'Request timeout - please try again' },
+        { status: 408 }
+      );
+    }
+
     return NextResponse.json(
       { error: error.message || 'Failed to process message' },
       { status: 500 }
@@ -320,7 +341,7 @@ export async function POST(req: Request) {
 async function waitForRunCompletion(threadId: string, runId: string) {
   let run;
   let attempts = 0;
-  const maxAttempts = 60; // Allow up to 60 seconds
+  const maxAttempts = 30; // Reduced max attempts (30 seconds)
 
   try {
     run = await openai.beta.threads.runs.retrieve(threadId, runId);
@@ -329,13 +350,13 @@ async function waitForRunCompletion(threadId: string, runId: string) {
       (run.status === 'in_progress' || run.status === 'queued') &&
       attempts < maxAttempts
     ) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await wait(1000);
       run = await openai.beta.threads.runs.retrieve(threadId, runId);
       attempts++;
     }
 
     if (attempts >= maxAttempts) {
-      throw new Error('Request timed out after 60 seconds');
+      throw new Error('Request timed out after 30 seconds');
     }
 
     if (run.status === 'failed') {
