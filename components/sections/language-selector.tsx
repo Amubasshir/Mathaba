@@ -13,16 +13,22 @@ import { Globe, X } from 'lucide-react';
 import { useState } from 'react';
 
 const languages = [
-  { code: 'tr', name: 'Türkçe' },
-  { code: 'hi', name: 'हिंदी' },
-  { code: 'sw', name: 'Kiswahili' },
-  { code: 'bn', name: 'বাংলা' },
-  { code: 'fa', name: 'فارسی' },
+  { code: 'ar', name: 'عربي' },
   { code: 'en', name: 'English' },
-  { code: 'ur', name: 'اردو' },
-  { code: 'fr', name: 'Français' },
-  { code: 'ar', name: 'العربية' },
+  { code: 'fr', name: 'French' },
+  { code: 'fa', name: 'فارسی' },
   { code: 'ms', name: 'Malay' },
+  { code: 'ur', name: 'اردو' },
+  { code: 'tr', name: 'Turkish' },
+  { code: 'id', name: 'Bahasa Indonesia' },
+  { code: 'ha', name: 'Hausa' },
+  { code: 'es', name: 'Español' },
+  { code: 'ru', name: 'Русский язык' },
+  { code: 'si', name: 'සිංහල භාෂාව' },
+  { code: 'am', name: 'አማርኛ' },
+  { code: 'my', name: 'Bahasa Malaysia' },
+  { code: 'hi', name: 'हिंदी' },
+  { code: 'uz', name: "o'zbek" },
 ];
 
 export default function LanguageSelector() {
@@ -48,7 +54,7 @@ export default function LanguageSelector() {
               <Globe className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm">
                 {languages.find((lang) => lang.code === language)?.name ||
-                  'العربية'}
+                  'عربي'}
               </span>
             </div>
           </Button>
@@ -56,9 +62,7 @@ export default function LanguageSelector() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] p-0 gap-0">
         <DialogHeader className="p-6 pb-2 flex flex-row items-center justify-between">
-          <DialogTitle className="text-xl font-semibold">
-            Select Your Language
-          </DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Select</DialogTitle>
           <Button
             variant="ghost"
             size="icon"
@@ -69,24 +73,15 @@ export default function LanguageSelector() {
           </Button>
         </DialogHeader>
         <div className="p-6 pt-2">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-1">
             {languages.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageSelect(lang.code)}
                 className={`
-                  px-4 py-2 rounded-md text-sm font-medium transition-colors
-                  ${
-                    language === lang.code
-                      ? 'bg-[#6b6291] text-white'
-                      : 'bg-[#e6f7f7] text-[#646263] hover:bg-[#c8ad0d]/20'
-                  }
+                  px-4 py-2 text-left text-base font-normal transition-colors hover:bg-gray-100
+                  ${language === lang.code ? 'bg-gray-100' : ''}
                   ${['ar', 'fa', 'ur'].includes(lang.code) ? 'rtl' : 'ltr'}
-                  ${
-                    lang.code !== 'en' && lang.code !== 'ar'
-                      ? 'opacity-50 cursor-not-allowed'
-                      : ''
-                  }
                 `}
               >
                 {lang.name}
