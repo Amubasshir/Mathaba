@@ -108,6 +108,34 @@ async function handleActiveRuns(threadId: string) {
   }
 }
 
+// Add topic validation function
+function isAllowedTopic(content: string): boolean {
+  const allowedTopics = [
+    'hajj',
+    'umrah',
+    'makkah',
+    'madinah',
+    'mecca',
+    'medina',
+    'masjid al-haram',
+    'masjid al-nabawi',
+    'pilgrim',
+    'health',
+    'الحج',
+    'العمرة',
+    'مكة',
+    'المدينة',
+    'المسجد الحرام',
+    'المسجد النبوي',
+  ];
+
+  const contentLower = content.toLowerCase();
+  return allowedTopics.some((topic) => contentLower.includes(topic));
+}
+
+const RESTRICTION_MESSAGE =
+  "I'm sorry, I can only answer questions related to pilgrims' health, Hajj, Umrah, Makkah, Madinah, Masjid al-Haram, and Masjid al-Nabawi.";
+
 export async function POST(req: Request) {
   try {
     const { threadId, content, assistantId, toolCallId } = await req.json();
@@ -154,6 +182,24 @@ export async function POST(req: Request) {
       }
     }
 
+    // Check if the topic is allowed before proceeding
+    if (!isAllowedTopic(content)) {
+      return new Response(
+        createStream(
+          JSON.stringify({
+            message: RESTRICTION_MESSAGE,
+          })
+        ),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-transform',
+          },
+        }
+      );
+    }
+
+    // If topic is allowed, proceed with the normal flow
     // Create the message
     try {
       await openai.beta.threads.messages.create(threadId, {

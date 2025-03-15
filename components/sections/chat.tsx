@@ -100,12 +100,28 @@ export default function Chat({
 
       const data = await response.json();
       setThreadId(data.threadId);
+
+      // Add the greeting message if it exists
+      if (data.greeting) {
+        setMessages([
+          {
+            role: 'assistant',
+            content: data.greeting,
+          },
+        ]);
+      }
+
       return data.threadId;
     } catch (err) {
       setError('Failed to initialize chat');
       return null;
     }
   };
+
+  // Initialize thread on component mount
+  useEffect(() => {
+    createThread();
+  }, []);
 
   const moderateMessage = async (content: string) => {
     try {

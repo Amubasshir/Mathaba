@@ -15,12 +15,50 @@ export async function POST() {
     // Create a new thread
     const thread = await openai.beta.threads.create();
 
-    return new Response(JSON.stringify({ threadId: thread.id }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-transform',
-      },
+    // Create an initial message to trigger the assistant's greeting
+    await openai.beta.threads.messages.create(thread.id, {
+      role: 'user',
+      content: 'start',
     });
+
+    // Create an initial run with assistant ID
+    const run = await openai.beta.threads.runs.create(thread.id, {
+      assistant_id: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+    });
+
+    // Wait for the run to complete
+    let completedRun;
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (attempts < maxAttempts) {
+      completedRun = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+      if (completedRun.status === 'completed') {
+        break;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      attempts++;
+    }
+
+    // Get the assistant's greeting message
+    const messages = await openai.beta.threads.messages.list(thread.id);
+    const greeting =
+      messages.data[0]?.content[0]?.type === 'text'
+        ? messages.data[0].content[0].text.value
+        : '';
+
+    return new Response(
+      JSON.stringify({
+        threadId: thread.id,
+        greeting: greeting,
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-transform',
+        },
+      }
+    );
   } catch (error) {
     console.error('Thread creation error:', error);
     return new Response(JSON.stringify({ error: 'Failed to create thread' }), {
