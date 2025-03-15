@@ -10,6 +10,17 @@ const openai = new OpenAI({
   timeout: 8000,
 });
 
+// Function to preserve formatting
+function preserveFormatting(text: string): string {
+  // Replace single newlines with double newlines to ensure proper spacing
+  return text
+    .replace(/\n/g, '\n\n') // Double all newlines
+    .replace(/\n\n\n\n/g, '\n\n') // But prevent more than double newlines
+    .replace(/- /g, '\n- ') // Ensure list items are on new lines
+    .replace(/\n\n- /g, '\n- ') // But prevent double newlines before list items
+    .trim();
+}
+
 export async function POST() {
   try {
     // Create a new thread
@@ -44,7 +55,7 @@ export async function POST() {
     const messages = await openai.beta.threads.messages.list(thread.id);
     const greeting =
       messages.data[0]?.content[0]?.type === 'text'
-        ? messages.data[0].content[0].text.value
+        ? preserveFormatting(messages.data[0].content[0].text.value)
         : '';
 
     return new Response(

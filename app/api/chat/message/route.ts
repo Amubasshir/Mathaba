@@ -136,6 +136,17 @@ function isAllowedTopic(content: string): boolean {
 const RESTRICTION_MESSAGE =
   "I'm sorry, I can only answer questions related to pilgrims' health, Hajj, Umrah, Makkah, Madinah, Masjid al-Haram, and Masjid al-Nabawi.";
 
+// Function to preserve formatting
+function preserveFormatting(text: string): string {
+  // Replace single newlines with double newlines to ensure proper spacing
+  return text
+    .replace(/\n/g, '\n\n') // Double all newlines
+    .replace(/\n\n\n\n/g, '\n\n') // But prevent more than double newlines
+    .replace(/- /g, '\n- ') // Ensure list items are on new lines
+    .replace(/\n\n- /g, '\n- ') // But prevent double newlines before list items
+    .trim();
+}
+
 export async function POST(req: Request) {
   try {
     const { threadId, content, assistantId, toolCallId } = await req.json();
@@ -165,7 +176,7 @@ export async function POST(req: Request) {
             JSON.stringify({
               message:
                 lastMessageContent.type === 'text'
-                  ? lastMessageContent.text.value
+                  ? preserveFormatting(lastMessageContent.text.value)
                   : '',
             })
           ),
@@ -303,7 +314,7 @@ export async function POST(req: Request) {
               JSON.stringify({
                 message:
                   lastMessageContent.type === 'text'
-                    ? lastMessageContent.text.value
+                    ? preserveFormatting(lastMessageContent.text.value)
                     : '',
               })
             ),
@@ -330,7 +341,7 @@ export async function POST(req: Request) {
         JSON.stringify({
           message:
             lastMessageContent.type === 'text'
-              ? lastMessageContent.text.value
+              ? preserveFormatting(lastMessageContent.text.value)
               : '',
         })
       ),
