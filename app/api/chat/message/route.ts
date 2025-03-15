@@ -128,7 +128,6 @@ export async function POST(req: Request) {
           }
         );
 
-        // Wait for completion with reduced timeout
         const completedRun = await waitForRunCompletion(threadId, run.id);
         const messages = await openai.beta.threads.messages.list(threadId);
         const lastMessageContent = messages.data[0].content[0];
@@ -176,13 +175,15 @@ export async function POST(req: Request) {
             type: 'function',
             function: {
               name: 'search_web',
-              description: 'Search the web for real-time information',
+              description:
+                'Search the web for real-time information about Hajj, Umrah, and pilgrim health matters',
               parameters: {
                 type: 'object',
                 properties: {
                   query: {
                     type: 'string',
-                    description: 'The search query',
+                    description:
+                      'The search query related to Hajj, Umrah, or pilgrim health',
                   },
                 },
                 required: ['query'],
@@ -212,10 +213,11 @@ export async function POST(req: Request) {
             `https://www.googleapis.com/customsearch/v1?key=${
               process.env.GOOGLE_SEARCH_API_KEY
             }&cx=${process.env.GOOGLE_SEARCH_CX}&q=${encodeURIComponent(
-              searchQuery
+              searchQuery +
+                ' (hajj OR umrah OR makkah OR madinah OR pilgrim health)'
             )}&dateRestrict=d1`,
             {
-              signal: AbortSignal.timeout(8000), // 8 second timeout for search
+              signal: AbortSignal.timeout(8000),
             }
           );
 
