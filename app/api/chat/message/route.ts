@@ -10,7 +10,7 @@ const openai = new OpenAI({
   timeout: 20000, // 20 seconds timeout
 });
 
-// Function to create a text encoder stream
+// Helper functions for stream handling
 function createStream(data: string) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
@@ -108,33 +108,69 @@ async function handleActiveRuns(threadId: string) {
   }
 }
 
-// Add topic validation function
-function isAllowedTopic(content: string): boolean {
-  const allowedTopics = [
-    'hajj',
-    'umrah',
-    'makkah',
-    'madinah',
-    'mecca',
-    'medina',
-    'masjid al-haram',
-    'masjid al-nabawi',
-    'pilgrim',
-    'health',
-    'الحج',
-    'العمرة',
-    'مكة',
-    'المدينة',
-    'المسجد الحرام',
-    'المسجد النبوي',
-  ];
-
-  const contentLower = content.toLowerCase();
-  return allowedTopics.some((topic) => contentLower.includes(topic));
+// Step 1: Content Moderation
+async function moderateContent(content: string): Promise<boolean> {
+  try {
+    const moderation = await openai.moderations.create({ input: content });
+    return moderation.results[0].flagged;
+  } catch (error) {
+    console.error('Moderation error:', error);
+    throw new Error('Content moderation failed');
+  }
 }
 
-const RESTRICTION_MESSAGE =
-  "I'm sorry, I can only answer questions related to pilgrims' health, Hajj, Umrah, Makkah, Madinah, Masjid al-Haram, and Masjid al-Nabawi.";
+// Step 2: Topic Validation and Input Processing
+async function processWithChatCompletion(
+  content: string
+): Promise<{ isValid: boolean; processedInput?: string }> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4-turbo-preview',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a specialized validator and processor for Hajj and Umrah related queries. Always greet first.
+Using the knowledge from the vector store (vs_9qrTmpCl2h37vIFwY2jbQQSQ), determine if the question is related to:
+- Hajj and its rituals
+- Umrah and its procedures
+- Pilgrim health and medical services
+- Makkah and its religious sites
+- Madinah and its religious sites
+- Masjid al-Haram
+- Masjid al-Nabawi
+- Any services, bookings, or information related to these topics
+
+If the question is related:
+1. Fix any errors in the input
+2. Summarize if needed
+3. Return "VALID: <processed_question>"
+
+If not related:
+Return "INVALID"
+
+Consider context and intent, not just keywords.`,
+        },
+        {
+          role: 'user',
+          content: content,
+        },
+      ],
+      temperature: 0,
+    });
+
+    const result = completion.choices[0]?.message?.content || '';
+    if (result.startsWith('VALID:')) {
+      return {
+        isValid: true,
+        processedInput: result.substring(6).trim(),
+      };
+    }
+    return { isValid: false };
+  } catch (error) {
+    console.error('Chat completion error:', error);
+    throw new Error('Input processing failed');
+  }
+}
 
 // Function to preserve formatting
 function preserveFormatting(text: string): string {
@@ -193,12 +229,14 @@ export async function POST(req: Request) {
       }
     }
 
-    // Check if the topic is allowed before proceeding
-    if (!isAllowedTopic(content)) {
+    // Step 1: Content Moderation
+    const isContentFlagged = await moderateContent(content);
+    if (isContentFlagged) {
       return new Response(
         createStream(
           JSON.stringify({
-            message: RESTRICTION_MESSAGE,
+            message:
+              'I apologize, but I cannot process this request as it contains inappropriate content.',
           })
         ),
         {
@@ -210,22 +248,38 @@ export async function POST(req: Request) {
       );
     }
 
-    // If topic is allowed, proceed with the normal flow
-    // Create the message
+    // Step 2: Topic Validation and Input Processing
+    const { isValid, processedInput } = await processWithChatCompletion(
+      content
+    );
+    if (!isValid) {
+      return new Response(
+        createStream(
+          JSON.stringify({
+            message:
+              "I'm sorry, I can only answer questions related to pilgrims' health, Hajj, Umrah, Makkah, Madinah, Masjid al-Haram, and Masjid al-Nabawi.",
+          })
+        ),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-transform',
+          },
+        }
+      );
+    }
+
+    // Ensure no active runs before proceeding
+    await ensureThreadReady(threadId);
+
+    // Step 3: Process with Assistant API
     try {
       await openai.beta.threads.messages.create(threadId, {
         role: 'user',
-        content: content,
+        content: processedInput || content,
       });
-    } catch (error) {
-      console.error('Message creation error:', error);
-      throw error;
-    }
 
-    // Create a new run
-    let run;
-    try {
-      run = await openai.beta.threads.runs.create(threadId, {
+      const run = await openai.beta.threads.runs.create(threadId, {
         assistant_id: assistantId,
         tools: [
           {
@@ -249,23 +303,17 @@ export async function POST(req: Request) {
           },
         ],
       });
-    } catch (error) {
-      console.error('Run creation error:', error);
-      throw error;
-    }
 
-    // Wait for completion with reduced timeout
-    const completedRun = await waitForRunCompletion(threadId, run.id);
+      const completedRun = await waitForRunCompletion(threadId, run.id);
 
-    // If there are tool calls, handle them
-    if (completedRun.status === 'requires_action') {
-      const toolCalls =
-        completedRun.required_action?.submit_tool_outputs.tool_calls;
-      if (toolCalls && toolCalls[0].function.name === 'search_web') {
-        try {
+      // Handle tool calls if needed
+      if (completedRun.status === 'requires_action') {
+        const toolCalls =
+          completedRun.required_action?.submit_tool_outputs.tool_calls;
+        if (toolCalls && toolCalls[0].function.name === 'search_web') {
           const searchQuery = JSON.parse(toolCalls[0].function.arguments).query;
 
-          // Perform web search with timeout
+          // Perform web search with timeout and specific focus
           const searchResponse = await fetch(
             `https://www.googleapis.com/customsearch/v1?key=${
               process.env.GOOGLE_SEARCH_API_KEY
@@ -302,60 +350,41 @@ export async function POST(req: Request) {
             );
 
           // Wait for final response
-          const finalRun = await waitForRunCompletion(
-            threadId,
-            submitResponse.id
-          );
-          const messages = await openai.beta.threads.messages.list(threadId);
-          const lastMessageContent = messages.data[0].content[0];
-
-          return new Response(
-            createStream(
-              JSON.stringify({
-                message:
-                  lastMessageContent.type === 'text'
-                    ? preserveFormatting(lastMessageContent.text.value)
-                    : '',
-              })
-            ),
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache, no-transform',
-              },
-            }
-          );
-        } catch (error) {
-          console.error('Search processing error:', error);
-          throw error;
+          await waitForRunCompletion(threadId, submitResponse.id);
         }
       }
+
+      // Get the final message
+      const messages = await openai.beta.threads.messages.list(threadId);
+      const lastMessageContent = messages.data[0].content[0];
+
+      return new Response(
+        createStream(
+          JSON.stringify({
+            message:
+              lastMessageContent.type === 'text'
+                ? preserveFormatting(lastMessageContent.text.value)
+                : '',
+          })
+        ),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-transform',
+          },
+        }
+      );
+    } catch (error) {
+      console.error('Assistant processing error:', error);
+      throw error;
     }
-
-    // Get the latest message
-    const messages = await openai.beta.threads.messages.list(threadId);
-    const lastMessageContent = messages.data[0].content[0];
-
-    return new Response(
-      createStream(
-        JSON.stringify({
-          message:
-            lastMessageContent.type === 'text'
-              ? preserveFormatting(lastMessageContent.text.value)
-              : '',
-        })
-      ),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache, no-transform',
-        },
-      }
-    );
   } catch (error: any) {
     console.error('Error in chat message route:', error);
     return new Response(
-      JSON.stringify({ error: error.message || 'Failed to process message' }),
+      JSON.stringify({
+        error: error.message || 'Failed to process message',
+        details: error instanceof Error ? error.stack : undefined,
+      }),
       {
         status: 500,
         headers: {
@@ -368,35 +397,29 @@ export async function POST(req: Request) {
 }
 
 async function waitForRunCompletion(threadId: string, runId: string) {
-  let run;
-  let attempts = 0;
-  const maxAttempts = 15; // 15 seconds max wait
+  const startTime = Date.now();
+  const timeout = 20000; // 20 second timeout
 
-  try {
-    run = await openai.beta.threads.runs.retrieve(threadId, runId);
+  while (true) {
+    if (Date.now() - startTime > timeout) {
+      throw new Error('Run completion timed out');
+    }
 
-    while (
-      (run.status === 'in_progress' || run.status === 'queued') &&
-      attempts < maxAttempts
+    const run = await openai.beta.threads.runs.retrieve(threadId, runId);
+
+    if (
+      run.status === 'completed' ||
+      run.status === 'requires_action' ||
+      run.status === 'failed'
     ) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      run = await openai.beta.threads.runs.retrieve(threadId, runId);
-      attempts++;
+      if (run.status === 'failed') {
+        throw new Error(
+          `Run failed: ${run.last_error?.message || 'Unknown error'}`
+        );
+      }
+      return run;
     }
 
-    if (attempts >= maxAttempts) {
-      throw new Error('Request timed out after 15 seconds');
-    }
-
-    if (run.status === 'failed') {
-      throw new Error(
-        `Run failed: ${run.last_error?.message || 'Unknown error'}`
-      );
-    }
-
-    return run;
-  } catch (error: any) {
-    console.error('Run completion error:', error);
-    throw new Error(`Run completion failed: ${error.message}`);
+    await wait(1000); // Wait 1 second before checking again
   }
 }
