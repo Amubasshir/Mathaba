@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     // Set greeting based on language
     const greeting =
       language === 'ar'
-        ? 'أهلاً بك أيها الحاج. أنا مساعدك في الحج والعمرة، هنا لأقدم لك التوجيه والدعم في رحلتك. كيف يمكنني مساعدتك اليوم؟'
+        ? 'أهلاً بك ضيف الرحمن. أنا مساعدك في الحج والعمرة، هنا لأقدم لك التوجيه والدعم في رحلتك. كيف يمكنني مساعدتك اليوم؟'
         : "Greetings, pilgrim. I am your Hajj and Umrah assistant, here to guide you on your spiritual journey. Whether you need health advice or information about your pilgrimage, I'm here to help.";
 
     // Create an initial message
