@@ -119,6 +119,26 @@ async function moderateContent(content: string): Promise<boolean> {
   }
 }
 
+// Define trusted domains for Hajj and Umrah related information
+const trustedDomains = [
+  // Government and Official Sites
+  'my.gov.sa',
+  'alharamain.gov.sa',
+  'haj.gov.sa',
+  'nusuk.sa',
+  'moh.gov.sa',
+  'kaia.sa',
+  'makkahtransit.sa',
+  'makkahcci.org.sa',
+  'rcmc.gov.sa',
+
+  // Religious Authority Sites
+  'alifta.gov.sa',
+  'azhar.eg',
+  'binbaz.org.sa',
+  'islamqa.info',
+].join(',');
+
 // Step 2: Topic Validation and Input Processing
 async function processWithChatCompletion(
   content: string
@@ -129,7 +149,7 @@ async function processWithChatCompletion(
       messages: [
         {
           role: 'system',
-          content: `You are a specialized validator and processor for Hajj and Umrah related queries. Always greet first.
+          content: `You are a specialized validator and processor for Hajj and Umrah related queries.
 Using the knowledge from the vector store (vs_9qrTmpCl2h37vIFwY2jbQQSQ), determine if the question is related to:
 - Hajj and its rituals
 - Umrah and its procedures
@@ -138,7 +158,28 @@ Using the knowledge from the vector store (vs_9qrTmpCl2h37vIFwY2jbQQSQ), determi
 - Madinah and its religious sites
 - Masjid al-Haram
 - Masjid al-Nabawi
-- Any services, bookings, or information related to these topics
+
+When searching for information, prioritize these official sources in the following order:
+
+Official Government Sources:
+- my.gov.sa (Saudi Government Portal)
+- alharamain.gov.sa (Two Holy Mosques)
+- haj.gov.sa (Ministry of Hajj)
+- nusuk.sa (Nusuk Platform)
+- kaia.sa (King Abdulaziz International Airport)
+- makkahtransit.sa (Makkah Transit)
+- makkahcci.org.sa (Makkah Chamber)
+- rcmc.gov.sa (Royal Commission for Makkah City)
+
+Religious Authority Sources:
+- alifta.gov.sa (Official Fatwa Portal)
+- azhar.eg (Al-Azhar)
+- binbaz.org.sa (Bin Baz Foundation)
+- islamqa.info (Islamic Q&A)
+
+Always include specific URLs when available, especially for deep-linked content like:
+- https://alharamain.gov.sa/public/?module=module_894348&main_subject=main_130159
+- https://my.gov.sa/ar/content/hajj-umrah#section-6
 
 If the question is related:
 1. Fix any errors in the input
@@ -318,9 +359,8 @@ export async function POST(req: Request) {
             `https://www.googleapis.com/customsearch/v1?key=${
               process.env.GOOGLE_SEARCH_API_KEY
             }&cx=${process.env.GOOGLE_SEARCH_CX}&q=${encodeURIComponent(
-              searchQuery +
-                ' (hajj OR umrah OR makkah OR madinah OR pilgrim health)'
-            )}&dateRestrict=d1`,
+              searchQuery
+            )}&siteSearch=${trustedDomains}&siteSearchFilter=i&num=10`,
             {
               signal: AbortSignal.timeout(8000),
             }
