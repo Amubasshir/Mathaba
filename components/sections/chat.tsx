@@ -165,6 +165,7 @@ export default function Chat({
           threadId: newThreadId,
           content,
           assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+          language,
           tools: [
             {
               type: 'function',

@@ -233,9 +233,22 @@ function preserveFormatting(text: string): string {
     .trim();
 }
 
+// Function to get restriction message based on language
+function getRestrictionMessage(language: string): string {
+  return language === 'ar'
+    ? 'عذراً، لا أستطيع الإجابة إلا على الأسئلة المتعلقة بصحة الحجاج، والحج، والعمرة، ومكة، والمدينة، والمسجد الحرام، والمسجد النبوي.'
+    : "I'm sorry, I can only answer questions related to pilgrims' health, Hajj, Umrah, Makkah, Madinah, Masjid al-Haram, and Masjid al-Nabawi.";
+}
+
 export async function POST(req: Request) {
   try {
-    const { threadId, content, assistantId, toolCallId } = await req.json();
+    const {
+      threadId,
+      content,
+      assistantId,
+      toolCallId,
+      language = 'en',
+    } = await req.json();
 
     // Handle tool call responses
     if (toolCallId) {
@@ -306,8 +319,7 @@ export async function POST(req: Request) {
       return new Response(
         createStream(
           JSON.stringify({
-            message:
-              "I'm sorry, I can only answer questions related to pilgrims' health, Hajj, Umrah, Makkah, Madinah, Masjid al-Haram, and Masjid al-Nabawi.",
+            message: getRestrictionMessage(language),
           })
         ),
         {
