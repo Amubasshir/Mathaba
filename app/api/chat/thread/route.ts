@@ -21,113 +21,26 @@ function preserveFormatting(text: string): string {
     .trim();
 }
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
+    // Get language from request
+    const { searchParams } = new URL(req.url);
+    const language = searchParams.get('language') || 'en';
+
     // Create a new thread
     const thread = await openai.beta.threads.create();
 
-    // Create an initial message to trigger the assistant's greeting
-    await openai.beta.threads.messages.create(thread.id, {
-      role: 'user',
-      content:
-        'Please provide a greeting and introduce yourself as a Hajj and Umrah assistant.',
-    });
-
-    // Create an initial run with assistant ID and web search tool
-    const run = await openai.beta.threads.runs.create(thread.id, {
-      assistant_id: 'asst_6JH9SIKjfPQrfApGdC0am63k',
-      tools: [
-        {
-          type: 'function',
-          function: {
-            name: 'search_web',
-            description:
-              'Search the web for real-time information about Hajj, Umrah, and pilgrim health matters',
-            parameters: {
-              type: 'object',
-              properties: {
-                query: {
-                  type: 'string',
-                  description:
-                    'The search query related to Hajj, Umrah, or pilgrim health',
-                },
-              },
-              required: ['query'],
-            },
-          },
-        },
-      ],
-    });
-
-    // Wait for the run to complete with improved error handling
-    let completedRun;
-    let attempts = 0;
-    const maxAttempts = 10;
-
-    while (attempts < maxAttempts) {
-      completedRun = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-
-      if (completedRun.status === 'completed') {
-        break;
-      } else if (completedRun.status === 'failed') {
-        throw new Error(
-          `Run failed: ${completedRun.last_error?.message || 'Unknown error'}`
-        );
-      } else if (completedRun.status === 'requires_action') {
-        // Handle any required tool calls
-        const toolCalls =
-          completedRun.required_action?.submit_tool_outputs.tool_calls;
-        if (toolCalls && toolCalls[0].function.name === 'search_web') {
-          const searchQuery = JSON.parse(toolCalls[0].function.arguments).query;
-
-          // Perform web search
-          const searchResponse = await fetch(
-            `https://www.googleapis.com/customsearch/v1?key=${
-              process.env.GOOGLE_SEARCH_API_KEY
-            }&cx=${process.env.GOOGLE_SEARCH_CX}&q=${encodeURIComponent(
-              searchQuery
-            )}`,
-            { signal: AbortSignal.timeout(5000) }
-          );
-
-          if (!searchResponse.ok) {
-            throw new Error(
-              `Search request failed: ${searchResponse.statusText}`
-            );
-          }
-
-          const searchData = await searchResponse.json();
-
-          // Submit search results
-          completedRun = await openai.beta.threads.runs.submitToolOutputs(
-            thread.id,
-            run.id,
-            {
-              tool_outputs: [
-                {
-                  tool_call_id: toolCalls[0].id,
-                  output: JSON.stringify(searchData),
-                },
-              ],
-            }
-          );
-        }
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      attempts++;
-    }
-
-    if (attempts >= maxAttempts) {
-      throw new Error('Greeting generation timed out');
-    }
-
-    // Get the assistant's greeting message
-    const messages = await openai.beta.threads.messages.list(thread.id);
+    // Set greeting based on language
     const greeting =
-      messages.data[0]?.content[0]?.type === 'text'
-        ? preserveFormatting(messages.data[0].content[0].text.value)
-        : 'Welcome! I am your Hajj and Umrah assistant. How can I help you today?';
+      language === 'ar'
+        ? 'أهلاً بك أيها الحاج. أنا مساعدك في الحج والعمرة، هنا لأقدم لك التوجيه والدعم في رحلتك. كيف يمكنني مساعدتك اليوم؟'
+        : "Greetings, pilgrim. I am your Hajj and Umrah assistant, here to guide you on your spiritual journey. Whether you need health advice or information about your pilgrimage, I'm here to help.";
+
+    // Create an initial message
+    await openai.beta.threads.messages.create(thread.id, {
+      role: 'assistant',
+      content: greeting,
+    });
 
     return new Response(
       JSON.stringify({

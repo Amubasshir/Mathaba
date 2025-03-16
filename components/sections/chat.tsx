@@ -88,9 +88,16 @@ export default function Chat({
     }
   }, [typingText, fullText, isTyping, currentTypingIndex]);
 
+  // Initialize thread on component mount and when language changes
+  useEffect(() => {
+    // Clear existing messages when language changes
+    setMessages([]);
+    createThread();
+  }, [language]); // Add language as a dependency
+
   const createThread = async () => {
     try {
-      const response = await fetch('/api/chat/thread', {
+      const response = await fetch(`/api/chat/thread?language=${language}`, {
         method: 'POST',
       });
 
@@ -117,11 +124,6 @@ export default function Chat({
       return null;
     }
   };
-
-  // Initialize thread on component mount
-  useEffect(() => {
-    createThread();
-  }, []);
 
   const moderateMessage = async (content: string) => {
     try {

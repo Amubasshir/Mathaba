@@ -163,6 +163,7 @@ Using the knowledge from the vector store (vs_9qrTmpCl2h37vIFwY2jbQQSQ), determi
 - Umrah and its procedures
 - Pilgrim health and medical services
 - Makkah and its religious sites
+- Mecca and its religious sites
 - Madinah and its religious sites
 - Masjid al-Haram
 - Masjid al-Nabawi
