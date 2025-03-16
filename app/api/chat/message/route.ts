@@ -131,6 +131,14 @@ const trustedDomains = [
   'makkahtransit.sa',
   'makkahcci.org.sa',
   'rcmc.gov.sa',
+  'https://my.gov.sa/en/content/hajj-umrah#section-1',
+  'https://alharamain.gov.sa/public/?module=eservices',
+  'https://alharamain.gov.sa/public/?module=module_894348&main_subject=main_130159',
+  'https://my.gov.sa/ar/content/hajj-umrah#section-6',
+  'https://www.makkahtransit.sa/mtbp/ar-sa/journey-planner/content/favorites',
+  'https://learn.haj.gov.sa/landing/index-en.html',
+  'https://rcmc.gov.sa/discover-makkah',
+  'https://ta.sdaia.gov.sa/#services',
 
   // Religious Authority Sites
   'alifta.gov.sa',
