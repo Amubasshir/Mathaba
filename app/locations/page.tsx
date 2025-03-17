@@ -6,99 +6,325 @@ import {
   LoadScript,
   Marker,
 } from '@react-google-maps/api';
-import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  ArrowLeft,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 
-interface Hospital {
+interface Location {
   id: string;
   name: string;
+  nameAr: string;
+  city: string;
+  cityAr: string;
   address: string;
-  rating: number;
   position: {
     lat: number;
     lng: number;
   };
+  mapUrl: string;
+  note?: string;
 }
 
-const hospitals: Hospital[] = [
+// Cities data
+const cities = [
+  { id: 'makkah', name: 'Makkah', nameAr: 'مكة المكرمة' },
+  { id: 'madinah', name: 'Madinah', nameAr: 'المدينة المنورة' },
+  { id: 'jeddah', name: 'Jeddah', nameAr: 'جدة' },
+];
+
+// Locations data from the Excel sheet
+const locations: Location[] = [
+  // Makkah Locations
   {
     id: '1',
-    name: 'King Abdulaziz Hospital - Makkah',
-    address: 'Al-Hajoun, 24222, Saudi Arabia',
-    rating: 3.0,
-    position: { lat: 21.4358, lng: 39.8256 },
+    name: 'Al-Masjid Al-Haram',
+    nameAr: 'المسجد الحرام',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Al-Haram District, Makkah',
+    position: { lat: 21.4225, lng: 39.8262 },
+    mapUrl: 'https://maps.app.goo.gl/Kuclq5uEs6CvSekgHA?g_st=iw',
   },
   {
     id: '2',
-    name: 'King Faisal Hospital - Makkah',
-    address:
-      '4358, Prince Majed Ibn Abd Al Aziz, 7451, Al Muabdah, Makkah 24236, Saudi Arabia',
-    rating: 3.0,
-    position: { lat: 21.4225, lng: 39.8233 },
+    name: 'Al-Haram',
+    nameAr: 'الحرم',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Makkah',
+    position: { lat: 21.4228, lng: 39.8261 },
+    mapUrl: 'https://maps.app.goo.gl/uJypVVGgHSAT15w8?g_st=iw',
   },
   {
     id: '3',
-    name: 'Heraa General Hospital',
-    address: 'Al Masfalah Al Munawarah Rd, Makkah 24227, Saudi Arabia',
-    rating: 2.8,
-    position: { lat: 21.4147, lng: 39.8213 },
+    name: 'Al-Kaaba',
+    nameAr: 'الكعبة',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Al-Haram, Makkah',
+    position: { lat: 21.4225, lng: 39.8262 },
+    mapUrl: 'https://maps.app.goo.gl/eaimWCcqPBSFU5zS7?g_st=iw',
   },
   {
     id: '4',
-    name: 'Al-Noor Specialist Hospital',
-    address: '3rd Ring Rd, Al Hijrah, Makkah 24341, Saudi Arabia',
-    rating: 3.1,
-    position: { lat: 21.4203, lng: 39.8158 },
+    name: 'Hira Cave',
+    nameAr: 'غار حراء',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Jabal An-Nur, Makkah',
+    position: { lat: 21.4581, lng: 39.8581 },
+    mapUrl: 'https://maps.app.goo.gl/Mmc24psqskX8Wcaw7?g_st=iw',
+    note: 'جبل النور الذي يبلغ ارتفاعه 642 متر يعتبر واحد من أهم المواقع التاريخية في مكة حيث يقع غار حراء في قمته. في هذا الغار، تلقى النبي محمد صلى الله عليه وسلم أول وحي من الله سبحانه وتعالى.',
   },
   {
     id: '5',
-    name: 'Makkah Ajyad Emergency Hospital',
-    address: 'Abatwa Tower, Ajyad St, Al Haram, Makkah 24231, Saudi Arabia',
-    rating: 3.2,
-    position: { lat: 21.4189, lng: 39.8267 },
+    name: 'Jabal Al-Nour',
+    nameAr: 'جبل النور',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Makkah',
+    position: { lat: 21.4581, lng: 39.8581 },
+    mapUrl: 'https://maps.app.goo.gl/tRX32o5gavDjL4k6?g_st=iw',
+    note: 'جبل النور الذي يبلغ ارتفاعه 642 متر يعتبر واحد من أهم المواقع التاريخية في مكة حيث يقع غار حراء في قمته. في هذا الغار، تلقى النبي محمد صلى الله عليه وسلم أول وحي من الله سبحانه وتعالى.',
   },
   {
     id: '6',
-    name: 'King Abdullah Medical City Specialist Hospital',
-    address: 'Muzdalifah Rd, Al-shahar, Makkah 24246, Saudi Arabia',
-    rating: 4.1,
-    position: { lat: 21.4281, lng: 39.8144 },
+    name: 'Hira Cultural District',
+    nameAr: 'حي حراء الثقافي',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Hira District, Makkah',
+    position: { lat: 21.4572, lng: 39.8567 },
+    mapUrl: 'https://maps.app.goo.gl/n4APdMvhKqCPWN26?g_st=iw',
+    note: 'حي حراء الثقافي سيكون منطقة حضارية تضم قصة الوحي بعض معلومات عن الجبل والتضاريس وكيف كان يتعبد النبي صلى الله عليه وسلم',
   },
   {
     id: '7',
-    name: 'Maternity and Children Hospital',
-    address: 'An Nuzha, Makkah, Saudi Arabia',
-    rating: 2.8,
-    position: { lat: 21.4306, lng: 39.8189 },
+    name: 'Cave Thawr',
+    nameAr: 'غار ثور',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Jabal Thawr, Makkah',
+    position: { lat: 21.3772, lng: 39.8417 },
+    mapUrl: 'https://maps.app.goo.gl/yM4K55XUYoXusYY6?g_st=iw',
+    note: 'غار ثور الموجود على جبل يبلغ ارتفاعه 759 متر. و يبعد ارتفاعه عن قمة الجبل 3 متراً. وله أهمية تاريخية كبيرة حيث أنه المكان الذي لجأ إليه النبي وأبو بكر في رحلة الهجرة. وقد ذكر في القرآن في سورة التوبة. وهو غار صغير يوجد حول فتحته صخور كبيرة. وقد بقيا فيه ثلاثة أيام حتى هدأت الأوضاع في مكة الرحمة. وكانت أسماء بنت أبي بكر رضي الله عنها تأتيهم بالطعام والشراب والأخبار في هذه المدة.',
+  },
+  {
+    id: '8',
+    name: 'Jabal Al-Rahmah',
+    nameAr: 'جبل الرحمة',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Arafat, Makkah',
+    position: { lat: 21.3547, lng: 39.9847 },
+    mapUrl: 'https://maps.app.goo.gl/9a36gQi2HXhLqHj99',
+    note: 'جبل الرحمة هو جبل صغير يقع بمنطقة عرفة من الجهة الشمال و يبلغ ارتفاعه نحو 65 متراً وقد أقيم عليه درج من الجهة الشرقية وهو عبارة عن كتلة صخرية كبيرة تحيط بها صخور صغيرة وقد أقيم عليه سياج حديدي من جميع الجهات وهو من المشاعر المقدسة في الحج والعمرة والزائرون والحجاج في موسم الحج يصعدون إلى قمته للدعاء والتضرع إلى الله تعالى.',
+  },
+  {
+    id: '9',
+    name: 'Mount Arafat',
+    nameAr: 'جبل عرفات',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Arafat, Makkah',
+    position: { lat: 21.3547, lng: 39.9847 },
+    mapUrl: 'https://maps.app.goo.gl/9a36gQi2HXhLqHj99',
+    note: 'جبل عرفات هو جبل يقع في منطقة عرفات شرق مكة المكرمة، وهو من المشاعر المقدسة في الحج، حيث يقف عليه الحجاج في اليوم التاسع من ذي الحجة (يوم عرفة). وقد سمي بجبل الرحمة لأنه موقع الرحمة والمغفرة، وهو المكان الذي يجتمع فيه الحجاج للدعاء والتضرع إلى الله في يوم عرفة.',
+  },
+  {
+    id: '10',
+    name: 'Al-Hudaybiyah',
+    nameAr: 'الحديبية',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Hudaybiyah, Makkah',
+    position: { lat: 21.4225, lng: 39.8262 },
+    mapUrl: 'https://maps.app.goo.gl/GKnLF6DZah4znnk8?g_st=iw',
+    note: 'المنطقة التاريخية التي تم فيها صلح الحديبية بين المسلمين وقريش في السنة السادسة من الهجرة.',
+  },
+  {
+    id: '11',
+    name: 'Masjid Al-Hudaybiyah',
+    nameAr: 'مسجد الحديبية',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Hudaybiyah, Makkah',
+    position: { lat: 21.4225, lng: 39.8262 },
+    mapUrl: 'https://maps.app.goo.gl/M7WpmLJqrmuzPVvt57g_st=iw',
+  },
+  {
+    id: '12',
+    name: 'Arafat',
+    nameAr: 'عرفات',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Arafat, Makkah',
+    position: { lat: 21.3547, lng: 39.9847 },
+    mapUrl: 'https://maps.app.goo.gl/W8U8VCreyM1nRUC7?g_st=iw',
+  },
+  {
+    id: '13',
+    name: 'Mina',
+    nameAr: 'منى',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Mina, Makkah',
+    position: { lat: 21.4133, lng: 39.8733 },
+    mapUrl: 'https://maps.app.goo.gl/B5rKBHBcNTGcsoj48?g_st=iw',
+  },
+  {
+    id: '14',
+    name: 'Muzdalifah',
+    nameAr: 'مزدلفة',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Muzdalifah, Makkah',
+    position: { lat: 21.3833, lng: 39.9167 },
+    mapUrl: 'https://maps.app.goo.gl/yHXrGu4mEb1wUxUr9?g_st=iw',
+  },
+  {
+    id: '15',
+    name: 'Jamarat',
+    nameAr: 'الجمرات',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Mina, Makkah',
+    position: { lat: 21.4133, lng: 39.8733 },
+    mapUrl: 'https://maps.app.goo.gl/AN3brrkHtuyPzAY9A?g_st=iw',
+  },
+  {
+    id: '16',
+    name: 'Jamarat Bridge',
+    nameAr: 'جسر الجمرات',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Mina, Makkah',
+    position: { lat: 21.4133, lng: 39.8733 },
+    mapUrl: 'https://maps.app.goo.gl/V4Wx9DfT3qZ3wmnQA?g_st=iw',
+  },
+  {
+    id: '17',
+    name: 'Jamarat Al-Aqabah',
+    nameAr: 'جمرة العقبة',
+    city: 'Makkah',
+    cityAr: 'مكة المكرمة',
+    address: 'Mina, Makkah',
+    position: { lat: 21.4133, lng: 39.8733 },
+    mapUrl: 'https://maps.app.goo.gl/S2ach14ahYjgkwMr8?g_st=iw',
+  },
+
+  // Jeddah Locations
+  {
+    id: '18',
+    name: 'King Abdulaziz International Airport',
+    nameAr: 'مطار الملك عبد العزيز الدولي',
+    city: 'Jeddah',
+    cityAr: 'جدة',
+    address: 'Jeddah',
+    position: { lat: 21.6827, lng: 39.1748 },
+    mapUrl: 'https://maps.app.goo.gl/gZDyxoiBbbiea7rh8?g_st=iw',
+  },
+  {
+    id: '19',
+    name: 'Hajj Terminal - King Abdulaziz Airport',
+    nameAr: 'مطار جدة الملك عبدالعزيز - صالة الحجاج',
+    city: 'Jeddah',
+    cityAr: 'جدة',
+    address: 'Jeddah Airport',
+    position: { lat: 21.6827, lng: 39.1748 },
+    mapUrl: 'https://maps.app.goo.gl/NwyjonGQ2QooSUBo9?g_st=iw',
+  },
+
+  // Madinah Locations
+  {
+    id: '20',
+    name: 'Prince Mohammad Bin Abdulaziz International Airport',
+    nameAr: 'مطار الأمير محمد بن عبدالعزيز بالمدينة المنورة',
+    city: 'Madinah',
+    cityAr: 'المدينة المنورة',
+    address: 'Madinah',
+    position: { lat: 24.55, lng: 39.705 },
+    mapUrl: 'https://maps.app.goo.gl/oAuBqrhsVR2x2i27',
+  },
+  {
+    id: '21',
+    name: 'Al-Masjid an-Nabawi',
+    nameAr: 'المسجد النبوي',
+    city: 'Madinah',
+    cityAr: 'المدينة المنورة',
+    address: 'Madinah',
+    position: { lat: 24.4672, lng: 39.6112 },
+    mapUrl: 'https://maps.app.goo.gl/SbPLRoCWq6F2NSkw9',
+  },
+  {
+    id: '22',
+    name: 'Quba Mosque',
+    nameAr: 'مسجد قباء',
+    city: 'Madinah',
+    cityAr: 'المدينة المنورة',
+    address: 'Quba, Madinah',
+    position: { lat: 24.4397, lng: 39.6157 },
+    mapUrl: 'https://maps.app.goo.gl/qJmp93ARTymUsxHE8',
+  },
+  {
+    id: '23',
+    name: 'Al-Baqi Cemetery',
+    nameAr: 'البقيع',
+    city: 'Madinah',
+    cityAr: 'المدينة المنورة',
+    address: 'Madinah',
+    position: { lat: 24.4677, lng: 39.6117 },
+    mapUrl: 'https://maps.app.goo.gl/biQ5vgUAG3YwJGvA6',
+  },
+  {
+    id: '24',
+    name: 'Mount Uhud',
+    nameAr: 'جبل أحد',
+    city: 'Madinah',
+    cityAr: 'المدينة المنورة',
+    address: 'Madinah',
+    position: { lat: 24.5175, lng: 39.6158 },
+    mapUrl: 'https://maps.app.goo.gl/KN4D2WUWuFzGdNfu5',
   },
 ];
 
 const containerStyle = {
   width: '100%',
-  height: 'calc(100vh - 180px)', // Full height minus header and cards
+  height: 'calc(100vh - 240px)', // Adjusted for city selector
 };
 
-const center = {
+const defaultCenter = {
   lat: 21.4225,
   lng: 39.8233,
 };
 
 export default function LocationsPage() {
-  const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(
+  const [selectedCity, setSelectedCity] = useState(cities[0]);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
-  const [activeMarker, setActiveMarker] = useState<Hospital | null>(null);
+  const [activeMarker, setActiveMarker] = useState<Location | null>(null);
   const [showLeftScroll, setShowLeftScroll] = useState(false);
   const [showRightScroll, setShowRightScroll] = useState(true);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Filter locations based on selected city
+  const filteredLocations = locations.filter(
+    (location) => location.city === selectedCity.name
+  );
 
   const scroll = (direction: 'left' | 'right') => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const scrollAmount = 300; // Scroll by roughly one card width
+    const scrollAmount = 300;
     const newScrollLeft =
       direction === 'left'
         ? container.scrollLeft - scrollAmount
@@ -114,17 +340,29 @@ export default function LocationsPage() {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    // Show/hide scroll buttons based on scroll position
     setShowLeftScroll(container.scrollLeft > 0);
     setShowRightScroll(
       container.scrollLeft < container.scrollWidth - container.clientWidth
     );
   };
 
+  // Calculate map center based on selected city's locations
+  const getCityCenter = () => {
+    if (selectedLocation) return selectedLocation.position;
+    if (filteredLocations.length === 0) return defaultCenter;
+
+    const lats = filteredLocations.map((loc) => loc.position.lat);
+    const lngs = filteredLocations.map((loc) => loc.position.lng);
+    return {
+      lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+      lng: (Math.min(...lngs) + Math.max(...lngs)) / 2,
+    };
+  };
+
   return (
-    <div className="h-screen flex flex-col">
-      {/* Back Button */}
-      <div className="p-4 bg-white shadow-sm">
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Header with Back Button and City Selector */}
+      <div className="sticky top-0 z-50 p-4 bg-white shadow-sm flex items-center">
         <button
           onClick={() => router.back()}
           className="flex items-center text-gray-600 hover:text-gray-900"
@@ -132,17 +370,52 @@ export default function LocationsPage() {
           <ArrowLeft className="h-5 w-5 mr-2" />
           <span>Go back</span>
         </button>
+
+        {/* City Selector Dropdown - Centered */}
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <div className="relative">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50"
+            >
+              <span>{selectedCity.name}</span>
+              <ChevronDown className="h-4 w-4" />
+            </button>
+
+            {isDropdownOpen && (
+              <div
+                className="absolute left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-lg shadow-lg border"
+                style={{ zIndex: 9999 }}
+              >
+                {cities.map((city) => (
+                  <button
+                    key={city.id}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg"
+                    onClick={() => {
+                      setSelectedCity(city);
+                      setIsDropdownOpen(false);
+                      setSelectedLocation(null);
+                      setActiveMarker(null);
+                    }}
+                  >
+                    {city.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Google Maps Section */}
-      <div className="flex-1 relative">
+      <div className="flex-1 relative overflow-hidden">
         <LoadScript
           googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
         >
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={selectedHospital?.position || center}
-            zoom={14}
+            center={getCityCenter()}
+            zoom={13}
             options={{
               fullscreenControl: false,
               streetViewControl: false,
@@ -150,13 +423,13 @@ export default function LocationsPage() {
               zoomControl: true,
             }}
           >
-            {hospitals.map((hospital) => (
+            {filteredLocations.map((location) => (
               <Marker
-                key={hospital.id}
-                position={hospital.position}
+                key={location.id}
+                position={location.position}
                 onClick={() => {
-                  setActiveMarker(hospital);
-                  setSelectedHospital(hospital);
+                  setActiveMarker(location);
+                  setSelectedLocation(location);
                 }}
               />
             ))}
@@ -168,7 +441,11 @@ export default function LocationsPage() {
                 <div>
                   <h3 className="font-semibold">{activeMarker.name}</h3>
                   <p className="text-sm">{activeMarker.address}</p>
-                  <p className="text-sm">Rating: {activeMarker.rating} ⭐</p>
+                  {activeMarker.note && (
+                    <p className="text-sm mt-1 text-gray-600">
+                      {activeMarker.note}
+                    </p>
+                  )}
                 </div>
               </InfoWindow>
             )}
@@ -176,10 +453,9 @@ export default function LocationsPage() {
         </LoadScript>
       </div>
 
-      {/* Horizontal Scrollable Hospital Cards with Scroll Buttons */}
+      {/* Horizontal Scrollable Location Cards */}
       <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg">
         <div className="relative">
-          {/* Left Scroll Button */}
           {showLeftScroll && (
             <button
               onClick={() => scroll('left')}
@@ -190,7 +466,6 @@ export default function LocationsPage() {
             </button>
           )}
 
-          {/* Right Scroll Button */}
           {showRightScroll && (
             <button
               onClick={() => scroll('right')}
@@ -201,34 +476,34 @@ export default function LocationsPage() {
             </button>
           )}
 
-          {/* Cards Container */}
           <div
             ref={scrollContainerRef}
             className="flex overflow-x-auto gap-4 p-4 no-scrollbar scroll-smooth"
             onScroll={handleScroll}
           >
-            {hospitals.map((hospital) => (
+            {filteredLocations.map((location) => (
               <div
-                key={hospital.id}
+                key={location.id}
                 className={`flex-none w-[280px] p-4 rounded-lg shadow-md cursor-pointer transition-all duration-200
                   ${
-                    selectedHospital?.id === hospital.id
+                    selectedLocation?.id === location.id
                       ? 'bg-[#F3F0FF] border border-[#6b6291]'
                       : 'bg-white hover:shadow-lg'
                   }`}
                 onClick={() => {
-                  setSelectedHospital(hospital);
-                  setActiveMarker(hospital);
+                  setSelectedLocation(location);
+                  setActiveMarker(location);
                 }}
               >
                 <h3 className="font-semibold text-base mb-1">
-                  {hospital.name}
+                  {location.name}
                 </h3>
-                <p className="text-gray-500 text-sm mb-2">{hospital.address}</p>
-                <div className="flex items-center">
-                  <span className="text-sm">{hospital.rating}</span>
-                  <span className="text-yellow-400 ml-1">★</span>
-                </div>
+                <p className="text-gray-500 text-sm mb-2">{location.address}</p>
+                {location.note && (
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                    {location.note}
+                  </p>
+                )}
               </div>
             ))}
           </div>
