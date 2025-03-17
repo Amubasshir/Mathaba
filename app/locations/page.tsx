@@ -1,5 +1,6 @@
 'use client';
 
+import { useLanguage } from '@/contexts/language-context';
 import {
   GoogleMap,
   InfoWindow,
@@ -314,6 +315,8 @@ export default function LocationsPage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { language } = useLanguage();
+  const isArabic = language === 'ar';
 
   // Filter locations based on selected city
   const filteredLocations = locations.filter(
@@ -368,7 +371,7 @@ export default function LocationsPage() {
           className="flex items-center text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          <span>Go back</span>
+          <span>{isArabic ? 'رجوع' : 'Go back'}</span>
         </button>
 
         {/* City Selector Dropdown - Centered */}
@@ -378,7 +381,7 @@ export default function LocationsPage() {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50"
             >
-              <span>{selectedCity.name}</span>
+              <span>{isArabic ? selectedCity.nameAr : selectedCity.name}</span>
               <ChevronDown className="h-4 w-4" />
             </button>
 
@@ -398,7 +401,7 @@ export default function LocationsPage() {
                       setActiveMarker(null);
                     }}
                   >
-                    {city.name}
+                    {isArabic ? city.nameAr : city.name}
                   </button>
                 ))}
               </div>
@@ -439,8 +442,12 @@ export default function LocationsPage() {
                 onCloseClick={() => setActiveMarker(null)}
               >
                 <div>
-                  <h3 className="font-semibold">{activeMarker.name}</h3>
-                  <p className="text-sm">{activeMarker.address}</p>
+                  <h3 className="font-semibold">
+                    {isArabic ? activeMarker.nameAr : activeMarker.name}
+                  </h3>
+                  <p className="text-sm">
+                    {isArabic ? activeMarker.cityAr : activeMarker.address}
+                  </p>
                   {activeMarker.note && (
                     <p className="text-sm mt-1 text-gray-600">
                       {activeMarker.note}
@@ -496,9 +503,11 @@ export default function LocationsPage() {
                 }}
               >
                 <h3 className="font-semibold text-base mb-1">
-                  {location.name}
+                  {isArabic ? location.nameAr : location.name}
                 </h3>
-                <p className="text-gray-500 text-sm mb-2">{location.address}</p>
+                <p className="text-gray-500 text-sm mb-2">
+                  {isArabic ? location.cityAr : location.address}
+                </p>
                 {location.note && (
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                     {location.note}
