@@ -28,7 +28,10 @@ interface Location {
     lng: number;
   };
   mapUrl: string;
-  note?: string;
+  note?: {
+    en: string;
+    ar: string;
+  };
 }
 
 // Cities data
@@ -80,7 +83,10 @@ const locations: Location[] = [
     address: 'Jabal An-Nur, Makkah',
     position: { lat: 21.4581, lng: 39.8581 },
     mapUrl: 'https://maps.app.goo.gl/Mmc24psqskX8Wcaw7?g_st=iw',
-    note: 'جبل النور الذي يبلغ ارتفاعه 642 متر يعتبر واحد من أهم المواقع التاريخية في مكة حيث يقع غار حراء في قمته. في هذا الغار، تلقى النبي محمد صلى الله عليه وسلم أول وحي من الله سبحانه وتعالى.',
+    note: {
+      en: 'Mount Al-Nour, reaching a height of 642 meters, is one of the most important historical sites in Makkah, with the Cave of Hira at its peak. In this cave, Prophet Muhammad (peace be upon him) received his first divine revelation from Allah.',
+      ar: 'جبل النور الذي يبلغ ارتفاعه 642 متر يعتبر واحد من أهم المواقع التاريخية في مكة حيث يقع غار حراء في قمته. في هذا الغار، تلقى النبي محمد صلى الله عليه وسلم أول وحي من الله سبحانه وتعالى.',
+    },
   },
   {
     id: '5',
@@ -91,7 +97,10 @@ const locations: Location[] = [
     address: 'Makkah',
     position: { lat: 21.4581, lng: 39.8581 },
     mapUrl: 'https://maps.app.goo.gl/tRX32o5gavDjL4k6?g_st=iw',
-    note: 'جبل النور الذي يبلغ ارتفاعه 642 متر يعتبر واحد من أهم المواقع التاريخية في مكة حيث يقع غار حراء في قمته. في هذا الغار، تلقى النبي محمد صلى الله عليه وسلم أول وحي من الله سبحانه وتعالى.',
+    note: {
+      en: 'Mount Al-Nour, reaching a height of 642 meters, is one of the most important historical sites in Makkah, with the Cave of Hira at its peak. In this cave, Prophet Muhammad (peace be upon him) received his first divine revelation from Allah.',
+      ar: 'جبل النور الذي يبلغ ارتفاعه 642 متر يعتبر واحد من أهم المواقع التاريخية في مكة حيث يقع غار حراء في قمته. في هذا الغار، تلقى النبي محمد صلى الله عليه وسلم أول وحي من الله سبحانه وتعالى.',
+    },
   },
   {
     id: '6',
@@ -102,7 +111,10 @@ const locations: Location[] = [
     address: 'Hira District, Makkah',
     position: { lat: 21.4572, lng: 39.8567 },
     mapUrl: 'https://maps.app.goo.gl/n4APdMvhKqCPWN26?g_st=iw',
-    note: 'حي حراء الثقافي سيكون منطقة حضارية تضم قصة الوحي بعض معلومات عن الجبل والتضاريس وكيف كان يتعبد النبي صلى الله عليه وسلم',
+    note: {
+      en: 'Hira Cultural District will be a cultural area featuring the story of divine revelation, information about the mountain and its terrain, and how Prophet Muhammad (peace be upon him) used to worship.',
+      ar: 'حي حراء الثقافي سيكون منطقة حضارية تضم قصة الوحي بعض معلومات عن الجبل والتضاريس وكيف كان يتعبد النبي صلى الله عليه وسلم',
+    },
   },
   {
     id: '7',
@@ -113,7 +125,10 @@ const locations: Location[] = [
     address: 'Jabal Thawr, Makkah',
     position: { lat: 21.3772, lng: 39.8417 },
     mapUrl: 'https://maps.app.goo.gl/yM4K55XUYoXusYY6?g_st=iw',
-    note: 'غار ثور الموجود على جبل يبلغ ارتفاعه 759 متر. و يبعد ارتفاعه عن قمة الجبل 3 متراً. وله أهمية تاريخية كبيرة حيث أنه المكان الذي لجأ إليه النبي وأبو بكر في رحلة الهجرة. وقد ذكر في القرآن في سورة التوبة. وهو غار صغير يوجد حول فتحته صخور كبيرة. وقد بقيا فيه ثلاثة أيام حتى هدأت الأوضاع في مكة الرحمة. وكانت أسماء بنت أبي بكر رضي الله عنها تأتيهم بالطعام والشراب والأخبار في هذه المدة.',
+    note: {
+      en: 'Cave Thawr is located on a mountain reaching 759 meters in height, with the cave being 3 meters below the peak. It holds great historical significance as the place where Prophet Muhammad and Abu Bakr took refuge during the migration (Hijra). It is mentioned in the Quran in Surah At-Tawbah. It is a small cave surrounded by large rocks. They stayed there for three days until the situation in Makkah calmed down. During this time, Asma bint Abu Bakr would bring them food, drink, and news.',
+      ar: 'غار ثور الموجود على جبل يبلغ ارتفاعه 759 متر. و يبعد ارتفاعه عن قمة الجبل 3 متراً. وله أهمية تاريخية كبيرة حيث أنه المكان الذي لجأ إليه النبي وأبو بكر في رحلة الهجرة. وقد ذكر في القرآن في سورة التوبة. وهو غار صغير يوجد حول فتحته صخور كبيرة. وقد بقيا فيه ثلاثة أيام حتى هدأت الأوضاع في مكة الرحمة. وكانت أسماء بنت أبي بكر رضي الله عنها تأتيهم بالطعام والشراب والأخبار في هذه المدة.',
+    },
   },
   {
     id: '8',
@@ -124,7 +139,10 @@ const locations: Location[] = [
     address: 'Arafat, Makkah',
     position: { lat: 21.3547, lng: 39.9847 },
     mapUrl: 'https://maps.app.goo.gl/9a36gQi2HXhLqHj99',
-    note: 'جبل الرحمة هو جبل صغير يقع بمنطقة عرفة من الجهة الشمال و يبلغ ارتفاعه نحو 65 متراً وقد أقيم عليه درج من الجهة الشرقية وهو عبارة عن كتلة صخرية كبيرة تحيط بها صخور صغيرة وقد أقيم عليه سياج حديدي من جميع الجهات وهو من المشاعر المقدسة في الحج والعمرة والزائرون والحجاج في موسم الحج يصعدون إلى قمته للدعاء والتضرع إلى الله تعالى.',
+    note: {
+      en: 'Jabal Al-Rahmah is a small mountain located in the northern part of Arafat, reaching about 65 meters in height. It has stairs built on its eastern side and consists of a large rock mass surrounded by smaller rocks. It has iron railings on all sides and is one of the sacred sites in Hajj and Umrah. Visitors and pilgrims during the Hajj season climb to its peak for supplication and prayer to Allah.',
+      ar: 'جبل الرحمة هو جبل صغير يقع بمنطقة عرفة من الجهة الشمال و يبلغ ارتفاعه نحو 65 متراً وقد أقيم عليه درج من الجهة الشرقية وهو عبارة عن كتلة صخرية كبيرة تحيط بها صخور صغيرة وقد أقيم عليه سياج حديدي من جميع الجهات وهو من المشاعر المقدسة في الحج والعمرة والزائرون والحجاج في موسم الحج يصعدون إلى قمته للدعاء والتضرع إلى الله تعالى.',
+    },
   },
   {
     id: '9',
@@ -135,7 +153,10 @@ const locations: Location[] = [
     address: 'Arafat, Makkah',
     position: { lat: 21.3547, lng: 39.9847 },
     mapUrl: 'https://maps.app.goo.gl/9a36gQi2HXhLqHj99',
-    note: 'جبل عرفات هو جبل يقع في منطقة عرفات شرق مكة المكرمة، وهو من المشاعر المقدسة في الحج، حيث يقف عليه الحجاج في اليوم التاسع من ذي الحجة (يوم عرفة). وقد سمي بجبل الرحمة لأنه موقع الرحمة والمغفرة، وهو المكان الذي يجتمع فيه الحجاج للدعاء والتضرع إلى الله في يوم عرفة.',
+    note: {
+      en: 'Mount Arafat is located in the Arafat region east of Makkah and is one of the sacred sites of Hajj. Pilgrims gather here on the 9th day of Dhul Hijjah (Day of Arafah). It is called the Mountain of Mercy because it is a place of mercy and forgiveness, where pilgrims gather to supplicate and pray to Allah on the Day of Arafah.',
+      ar: 'جبل عرفات هو جبل يقع في منطقة عرفات شرق مكة المكرمة، وهو من المشاعر المقدسة في الحج، حيث يقف عليه الحجاج في اليوم التاسع من ذي الحجة (يوم عرفة). وقد سمي بجبل الرحمة لأنه موقع الرحمة والمغفرة، وهو المكان الذي يجتمع فيه الحجاج للدعاء والتضرع إلى الله في يوم عرفة.',
+    },
   },
   {
     id: '10',
@@ -146,7 +167,10 @@ const locations: Location[] = [
     address: 'Hudaybiyah, Makkah',
     position: { lat: 21.4225, lng: 39.8262 },
     mapUrl: 'https://maps.app.goo.gl/GKnLF6DZah4znnk8?g_st=iw',
-    note: 'المنطقة التاريخية التي تم فيها صلح الحديبية بين المسلمين وقريش في السنة السادسة من الهجرة.',
+    note: {
+      en: 'The historical area where the Treaty of Hudaybiyah was concluded between the Muslims and Quraysh in the sixth year after Hijra.',
+      ar: 'المنطقة التاريخية التي تم فيها صلح الحديبية بين المسلمين وقريش في السنة السادسة من الهجرة.',
+    },
   },
   {
     id: '11',
@@ -450,7 +474,7 @@ export default function LocationsPage() {
                   </p>
                   {activeMarker.note && (
                     <p className="text-sm mt-1 text-gray-600">
-                      {activeMarker.note}
+                      {isArabic ? activeMarker.note.ar : activeMarker.note.en}
                     </p>
                   )}
                 </div>
@@ -510,7 +534,7 @@ export default function LocationsPage() {
                 </p>
                 {location.note && (
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                    {location.note}
+                    {isArabic ? location.note.ar : location.note.en}
                   </p>
                 )}
               </div>
