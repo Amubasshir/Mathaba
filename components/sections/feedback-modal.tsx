@@ -83,8 +83,6 @@ export default function FeedbackModal({
       genders: [
         { value: 'male', label: 'Male' },
         { value: 'female', label: 'Female' },
-        { value: 'other', label: 'Other' },
-        { value: 'prefer_not_to_say', label: 'Prefer not to say' },
       ],
       selectPlaceholder: 'Please select',
     },
@@ -113,8 +111,6 @@ export default function FeedbackModal({
       genders: [
         { value: 'male', label: 'ذكر' },
         { value: 'female', label: 'أنثى' },
-        { value: 'other', label: 'آخر' },
-        { value: 'prefer_not_to_say', label: 'أفضل عدم الذكر' },
       ],
       selectPlaceholder: 'الرجاء الاختيار',
     },

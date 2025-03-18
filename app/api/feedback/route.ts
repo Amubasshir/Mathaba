@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const validGenders = ['male', 'female', 'other', 'prefer_not_to_say'];
+    const validGenders = ['male', 'female'];
     if (!validGenders.includes(body.gender)) {
       return NextResponse.json(
         { success: false, error: 'Invalid gender value' },

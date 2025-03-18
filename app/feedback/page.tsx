@@ -51,8 +51,6 @@ const translations = {
     genderLabels: {
       male: 'Male',
       female: 'Female',
-      other: 'Other',
-      prefer_not_to_say: 'Prefer not to say',
     },
   },
   ar: {
@@ -70,8 +68,6 @@ const translations = {
     genderLabels: {
       male: 'ذكر',
       female: 'أنثى',
-      other: 'آخر',
-      prefer_not_to_say: 'أفضل عدم الذكر',
     },
   },
 };
