@@ -25,7 +25,7 @@ const feedbackSchema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
-      enum: ['male', 'female', 'other', 'prefer_not_to_say'],
+      enum: ['male', 'female'],
     },
     location: {
       type: {
