@@ -125,7 +125,7 @@ export default function FeedbackModal({
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         try {
-          // Use reverse geocoding to get city and country
+          // Use reverse geocoding to get city and country.
           const response = await fetch(
             `https://api.opencagedata.com/geocode/v1/json?q=${position.coords.latitude}+${position.coords.longitude}&key=${process.env.NEXT_PUBLIC_OPENCAGE_API_KEY}`
           );
