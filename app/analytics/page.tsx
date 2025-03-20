@@ -13,7 +13,7 @@ export default function AnalyticsPage() {
     totalInteractions: 0,
     uniqueUsers: 0,
     languages: 0,
-    avgResponseTime: '0s',
+    avgResponseTime: '0.5s',
   });
 
   useEffect(() => {
@@ -21,28 +21,32 @@ export default function AnalyticsPage() {
       try {
         const response = await fetch('/api/analytics/store');
         const data = await response.json();
-        setAnalyticsData(data.interactions || []);
 
-        // Calculate stats
-        const uniqueUsers = new Set(
-          data.interactions.map((i: Interaction) => i.userId)
-        ).size;
-        const uniqueLanguages = new Set(
-          data.interactions.map((i: Interaction) => i.language)
-        ).size;
+        if (data.interactions) {
+          setAnalyticsData(data.interactions);
 
-        setStats({
-          totalInteractions: data.interactions.length,
-          uniqueUsers,
-          languages: uniqueLanguages,
-          avgResponseTime: '0.5s',
-        });
+          // Calculate stats
+          const uniqueUsers = new Set(
+            data.interactions.map((i: Interaction) => i.userId)
+          ).size;
+          const uniqueLanguages = new Set(
+            data.interactions.map((i: Interaction) => i.language)
+          ).size;
+
+          setStats({
+            totalInteractions: data.interactions.length,
+            uniqueUsers,
+            languages: uniqueLanguages,
+            avgResponseTime: '0.5s', // You might want to calculate this based on actual response times
+          });
+        }
       } catch (error) {
         console.error('Failed to fetch analytics data:', error);
       }
     };
 
     fetchData();
+    // Fetch every 30 seconds
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);

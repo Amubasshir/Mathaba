@@ -25,6 +25,7 @@ export default function Chat({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { dir, t, categories, language } = useLanguage();
   const [thinkingDots, setThinkingDots] = useState('');
@@ -94,6 +95,32 @@ export default function Chat({
     setMessages([]);
     createThread();
   }, [language]); // Add language as a dependency
+
+  // Add useEffect for getting location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${position.coords.latitude}&lon=${position.coords.longitude}&format=json`
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            setUserLocation({
+              city:
+                data.address.city || data.address.town || data.address.village,
+              country: data.address.country,
+              countryCode: data.address.country_code?.toUpperCase(),
+              region: data.address.state,
+            });
+          }
+        } catch (error) {
+          console.error('Error getting location:', error);
+        }
+      });
+    }
+  }, []);
 
   const createThread = async () => {
     try {
@@ -166,6 +193,7 @@ export default function Chat({
           content,
           assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
           language,
+          location: userLocation,
           tools: [
             {
               type: 'function',
@@ -245,7 +273,7 @@ export default function Chat({
     }
   };
 
-  const streamText = (text: string, userInput: string) => {
+  const streamText = (text: string) => {
     // Remove ** characters and source references from the text
     const cleanText = text
       .replace(/\*\*/g, '')
@@ -273,89 +301,8 @@ export default function Chat({
           }
           return newMessages;
         });
-        // Store interaction only after streaming is complete
-        storeInteraction(userInput, cleanText);
       }
     }, 30);
-  };
-
-  const storeInteraction = async (
-    userInput: string,
-    assistantResponse: string
-  ) => {
-    // Check if this is a duplicate interaction within 2 seconds
-    const now = Date.now();
-    if (
-      lastStoredInteraction.current &&
-      lastStoredInteraction.current.userInput === userInput &&
-      now - lastStoredInteraction.current.timestamp < 2000
-    ) {
-      console.log('Preventing duplicate interaction storage');
-      return;
-    }
-
-    // Update last stored interaction
-    lastStoredInteraction.current = {
-      userInput,
-      timestamp: now,
-    };
-
-    try {
-      // Get user's location
-      let locationData = {};
-
-      if (navigator.geolocation) {
-        try {
-          const position = await new Promise<GeolocationPosition>(
-            (resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(resolve, reject);
-            }
-          );
-
-          // Use nominatim (OpenStreetMap) for reverse geocoding
-          const { latitude, longitude } = position.coords;
-          const geocodeResponse = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-          );
-
-          if (geocodeResponse.ok) {
-            const data = await geocodeResponse.json();
-            locationData = {
-              city:
-                data.address.city || data.address.town || data.address.village,
-              country: data.address.country,
-              countryCode: data.address.country_code?.toUpperCase(),
-              region: data.address.state,
-            };
-          }
-        } catch (error) {
-          console.error('Error getting location:', error);
-        }
-      }
-
-      const response = await fetch('/api/analytics/store', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: 'anonymous',
-          userInput,
-          assistantResponse,
-          language,
-          source: document.referrer || 'direct',
-          sessionId: threadId || 'no-thread',
-          threadId: threadId || 'no-thread',
-          location: locationData,
-        }),
-      });
-
-      if (!response.ok) {
-        console.error('Failed to store interaction');
-      }
-    } catch (error) {
-      console.error('Error storing interaction:', error);
-    }
   };
 
   const handleSubmit = async () => {
@@ -390,7 +337,7 @@ export default function Chat({
       const newMessages = prev.slice(0, -1);
       if (response) {
         newMessages.push({ role: 'assistant', content: '' }); // Empty content initially
-        streamText(response, content); // Pass user input to streamText
+        streamText(response); // Remove content parameter since we don't need it anymore
       } else {
         newMessages.push({
           role: 'assistant',
@@ -424,7 +371,7 @@ export default function Chat({
         newMessages.push({ role: 'assistant', content: '' });
         return newMessages;
       });
-      streamText(answer, question); // Pass question as user input
+      streamText(answer); // Pass question as user input
       setIsLoading(false);
     }, 800);
   };

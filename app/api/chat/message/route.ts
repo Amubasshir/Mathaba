@@ -215,6 +215,7 @@ export async function POST(req: Request) {
       assistantId,
       toolCallId,
       language = 'en',
+      location,
     } = await req.json();
 
     // Handle tool call responses
@@ -385,6 +386,34 @@ export async function POST(req: Request) {
       // Get the final message
       const messages = await openai.beta.threads.messages.list(threadId);
       const lastMessageContent = messages.data[0].content[0];
+
+      // Store analytics data only once at the end
+      const analyticsData = {
+        userId: 'anonymous',
+        userInput: content,
+        assistantResponse:
+          lastMessageContent.type === 'text'
+            ? lastMessageContent.text.value
+            : '',
+        language,
+        source: 'chat',
+        sessionId: threadId,
+        threadId: threadId,
+        location: location || {
+          city: 'Unknown',
+          country: 'Unknown',
+          countryCode: 'UN',
+        },
+      };
+
+      // Store the interaction
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/analytics/store`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(analyticsData),
+      });
 
       return new Response(
         createStream(
