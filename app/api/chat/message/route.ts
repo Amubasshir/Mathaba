@@ -406,14 +406,33 @@ export async function POST(req: Request) {
         },
       };
 
-      // Store the interaction
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/analytics/store`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(analyticsData),
-      });
+      // Get base URL from request
+      const requestUrl = new URL(req.url);
+      const baseUrl = `${requestUrl.protocol}//${requestUrl.host}`;
+
+      // Store the interaction using the current request's origin
+      try {
+        const analyticsResponse = await fetch(
+          `${baseUrl}/api/analytics/store`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(analyticsData),
+          }
+        );
+
+        if (!analyticsResponse.ok) {
+          console.error(
+            'Failed to store analytics:',
+            await analyticsResponse.text()
+          );
+        }
+      } catch (analyticsError) {
+        console.error('Error storing analytics:', analyticsError);
+        // Don't throw here - we still want to return the chat response
+      }
 
       return new Response(
         createStream(

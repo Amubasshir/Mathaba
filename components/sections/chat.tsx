@@ -180,44 +180,56 @@ export default function Chat({
       if (!newThreadId) {
         newThreadId = await createThread();
         setThreadId(newThreadId);
-        if (!newThreadId) return;
+        if (!newThreadId) {
+          throw new Error('Failed to create chat thread');
+        }
       }
 
-      const response = await fetch('/api/chat/message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          threadId: newThreadId,
-          content,
-          assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
-          language,
-          location: userLocation,
-          tools: [
-            {
-              type: 'function',
-              function: {
-                name: 'search_web',
-                description: 'Search the web for real-time information',
-                parameters: {
-                  type: 'object',
-                  properties: {
-                    query: {
-                      type: 'string',
-                      description: 'The search query',
-                    },
-                  },
-                  required: ['query'],
-                },
-              },
-            },
-          ],
-        }),
-      });
+      // Add retry logic for network issues
+      let retries = 2;
+      let response;
+      let error;
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
+      while (retries >= 0) {
+        try {
+          response = await fetch('/api/chat/message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              threadId: newThreadId,
+              content,
+              assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+              language,
+              location: userLocation,
+            }),
+          });
+
+          if (response.ok) {
+            break;
+          }
+
+          // If response is not ok, get error details
+          const errorData = await response.json().catch(() => ({}));
+          error = new Error(
+            errorData.error || `Server responded with status ${response.status}`
+          );
+        } catch (e) {
+          error = e;
+        }
+
+        retries--;
+        if (retries >= 0) {
+          // Wait before retrying (exponential backoff)
+          await new Promise((resolve) =>
+            setTimeout(resolve, (2 - retries) * 1000)
+          );
+        }
+      }
+
+      if (!response?.ok) {
+        throw error || new Error('Failed to send message after retries');
       }
 
       const data = await response.json();
@@ -258,7 +270,10 @@ export default function Chat({
           });
 
           if (!finalResponse.ok) {
-            throw new Error('Failed to process search results');
+            const errorData = await finalResponse.json().catch(() => ({}));
+            throw new Error(
+              errorData.error || 'Failed to process search results'
+            );
           }
 
           const finalData = await finalResponse.json();
@@ -268,7 +283,8 @@ export default function Chat({
 
       return data.message;
     } catch (err) {
-      setError('Failed to send message');
+      console.error('Error in sendMessage:', err);
+      setError(err instanceof Error ? err.message : 'Failed to send message');
       return null;
     }
   };
