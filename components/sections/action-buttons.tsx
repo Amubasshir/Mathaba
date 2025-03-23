@@ -21,34 +21,135 @@ export default function ActionButtons({
   const { language } = useLanguage();
 
   const buttonText = {
-    faq: language === 'en' ? 'FAQ' : 'الأسئلة المتكررة',
-    guides: language === 'en' ? 'Educational Guides' : 'الأدلة التوعوية',
+    faq: {
+      en: 'FAQ',
+      ar: 'الأسئلة المتكررة',
+      fr: 'FAQ',
+      fa: 'سوالات متداول',
+      ms: 'Soalan Lazim',
+      ur: 'اکثر پوچھے گئے سوالات',
+      tr: 'SSS',
+      id: 'FAQ',
+      ha: 'Tambayoyi akai-akai',
+      es: 'Preguntas frecuentes',
+      ru: 'Часто задаваемые вопросы',
+      si: 'නිතර අසන ප්‍රශ්න',
+      am: 'ተደጋጋሚ ጥያቄዎች',
+      my: 'အမေးများသောမေးခွန်းများ',
+      hi: 'अक्सर पूछे जाने वाले प्रश्न',
+      uz: 'TSS',
+    },
+    guides: {
+      en: 'Educational Guides',
+      ar: 'الأدلة التوعوية',
+      fr: 'Guides éducatifs',
+      fa: 'راهنماهای آموزشی',
+      ms: 'Panduan Pendidikan',
+      ur: 'تعلیمی رہنما',
+      tr: 'Eğitim Kılavuzları',
+      id: 'Panduan Pendidikan',
+      ha: 'Jagororin Ilimi',
+      es: 'Guías educativas',
+      ru: 'Образовательные руководства',
+      si: 'අධ්‍යාපනික මාර්ගෝපදේශ',
+      am: 'የትምህርት መመሪያዎች',
+      my: 'ပညာရေးလမ်းညွှန်များ',
+      hi: 'शैक्षिक मार्गदर्शिकाएँ',
+      uz: 'Ta\'limiy qo\'llanmalar',
+    },
   };
-
-  const guideButtons = [
+  
+const guideButtons = [
     {
       id: 1,
-      text: language === 'en' ? 'Health Awareness' : 'التوعية الصحية',
+      text: {
+        en: 'Health Awareness',
+        ar: 'التوعية الصحية',
+        fr: 'Sensibilisation à la santé',
+        fa: 'آگاهی از سلامت',
+        ms: 'Kesedaran Kesihatan',
+        ur: 'صحت سے متعلق آگاہی',
+        tr: 'Sağlık Bilinci',
+        id: 'Kesadaran Kesehatan',
+        ha: 'Sanarwar Lafiya',
+        es: 'Conciencia de la Salud',
+        ru: 'Осведомленность о здоровье',
+        si: 'සෞඛ්‍ය දැනුවත් කිරීම',
+        am: 'የጤና ግንዛቤ',
+        my: 'ကျန်းမာရေးအသိပညာ',
+        hi: 'स्वास्थ्य जागरूकता',
+        uz: 'Sog\'liqni saqlash xabardorligi'
+      },
       url: 'https://drive.google.com/file/d/1CWPA4hSIhyRcxok6Y1Th83wXCU3-A07f/view',
     },
     {
       id: 2,
-      text: language === 'en' ? 'Financial Awareness' : 'التوعية المالية',
+      text: {
+        en: 'Financial Awareness',
+        ar: 'التوعية المالية',
+        fr: 'Sensibilisation financière',
+        fa: 'آگاهی مالی',
+        ms: 'Kesedaran Kewangan',
+        ur: 'مالی آگاہی',
+        tr: 'Finansal Bilinç',
+        id: 'Kesadaran Finansial',
+        ha: 'Sanarwar Kuɗi',
+        es: 'Conciencia Financiera',
+        ru: 'Финансовая осведомленность',
+        si: 'මූල්‍ය දැනුවත් කිරීම',
+        am: 'የገንዘብ ግንዛቤ',
+        my: 'ဘဏ္ဍာရေးအသိပညာ',
+        hi: 'वित्तीय जागरूकता',
+        uz: 'Moliyaviy xabardorlik'
+      },
       url: 'https://drive.google.com/file/d/1USLIxIwnBxweNKsMI1APLPO9BI1MLMqd/view',
     },
     {
       id: 3,
-      text:
-        language === 'en' ? 'Legal Awareness Guide' : 'دليل التوعية القانونية',
+      text: {
+        en: 'Legal Awareness Guide',
+        ar: 'دليل التوعية القانونية',
+        fr: 'Guide de sensibilisation juridique',
+        fa: 'راهنمای آگاهی حقوقی',
+        ms: 'Panduan Kesedaran Undang-undang',
+        ur: 'قانونی آگاہی گائیڈ',
+        tr: 'Hukuki Farkındalık Rehberi',
+        id: 'Panduan Kesadaran Hukum',
+        ha: 'Jagorar Fadakarwa Ta Shari\'a',
+        es: 'Guía de Conciencia Legal',
+        ru: 'Руководство по правовой осведомленности',
+        si: 'නීතිමය දැනුවත් කිරීමේ මාර්ගෝපදේශය',
+        am: 'የሕግ ግንዛቤ መመሪያ',
+        my: 'တရားဥပဒေအသိပညာပေးလမ်းညွှန်',
+        hi: 'कानूनी जागरूकता गाइड',
+        uz: 'Huquqiy xabardorlik qo\'llanmasi'
+      },
       url: 'https://drive.google.com/file/d/1IwB9HdvtI0yoVo1IraXTKSXzhXEV3yJQ/view',
     },
     {
       id: 4,
-      text: language === 'en' ? 'Umrah Guide' : 'دليل العمرة',
+      text: {
+        en: 'Umrah Guide',
+        ar: 'دليل العمرة',
+        fr: 'Guide de la Omra',
+        fa: 'راهنمای عمره',
+        ms: 'Panduan Umrah',
+        ur: 'عمرہ گائیڈ',
+        tr: 'Umre Rehberi',
+        id: 'Panduan Umrah',
+        ha: 'Jagorar Umrah',
+        es: 'Guía de la Umrah',
+        ru: 'Руководство по Умре',
+        si: 'උම්රා මාර්ගෝපදේශය',
+        am: 'የዑምራ መመሪያ',
+        my: 'Umrah လမ်းညွှန်',
+        hi: 'उमराह गाइड',
+        uz: 'Umra qo\'llanmasi'
+      },
       url: 'https://drive.google.com/file/d/1xhcdljVbFZQo45UQ2JbeDJFuL67prXOl/view',
     },
   ];
-
+  
   useEffect(() => {
     if (isManualChat) {
       setShowFAQ(false);
@@ -81,7 +182,7 @@ export default function ActionButtons({
           className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-full"
           onClick={handleFAQClick}
         >
-          {buttonText.faq}
+          {buttonText.faq[language]}
         </Button>
 
         {showFAQ && (
@@ -97,7 +198,7 @@ export default function ActionButtons({
           className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-full"
           onClick={handleGuidesClick}
         >
-          {buttonText.guides}
+          {buttonText.guides[language]}
         </Button>
         {showRedirectButtons && (
           <div className="mt-4 space-y-3">
@@ -111,7 +212,7 @@ export default function ActionButtons({
                 }}
                 onClick={() => handleGuideClick(guide.url)}
               >
-                {guide.text}
+                {guide.text[language]}
               </button>
             ))}
           </div>

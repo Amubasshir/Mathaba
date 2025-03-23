@@ -12,6 +12,25 @@ import { useLanguage } from '@/contexts/language-context';
 import { Globe, X } from 'lucide-react';
 import { useState } from 'react';
 
+type Language =
+  | "ar"
+  | "en"
+  | "fr"
+  | "fa"
+  | "ms"
+  | "ur"
+  | "tr"
+  | "id"
+  | "ha"
+  | "es"
+  | "ru"
+  | "si"
+  | "am"
+  | "my"
+  | "hi"
+  | "uz";
+
+
 const languages = [
   { code: 'ar', name: 'عربي' },
   { code: 'en', name: 'English' },
@@ -35,11 +54,14 @@ export default function LanguageSelector() {
   const { language, setLanguage } = useLanguage();
   const [open, setOpen] = useState(false);
 
-  const handleLanguageSelect = (code: string) => {
-    if (code === 'en' || code === 'ar') {
-      setLanguage(code);
-      setOpen(false);
-    }
+  const handleLanguageSelect = (code: Language) => {
+    // console.log({code});
+    setLanguage(code);
+    setOpen(false)
+    // if (code === 'en' || code === 'ar') {
+    //   setLanguage(code);
+    //   setOpen(false);
+    // }
   };
 
   return (
@@ -77,7 +99,7 @@ export default function LanguageSelector() {
             {languages.map((lang) => (
               <button
                 key={lang.code}
-                onClick={() => handleLanguageSelect(lang.code)}
+                onClick={() => handleLanguageSelect(lang.code as Language)}
                 className={`
                   px-4 py-2 text-left text-base font-normal transition-colors hover:bg-gray-100
                   ${language === lang.code ? 'bg-gray-100' : ''}
