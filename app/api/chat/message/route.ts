@@ -349,7 +349,7 @@ export async function POST(req: Request) {
               process.env.GOOGLE_SEARCH_API_KEY
             }&cx=${process.env.GOOGLE_SEARCH_CX}&q=${encodeURIComponent(
               searchQuery
-            )}&siteSearch=${trustedDomains}&siteSearchFilter=i&num=10`,
+            )}&siteSearch=${trustedDomains}&siteSearchFilter=i&num=100`,
             {
               signal: AbortSignal.timeout(8000),
             }
