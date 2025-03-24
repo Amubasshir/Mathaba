@@ -15,7 +15,7 @@ export default function LocationLanguage() {
 
   return (
     <>
-      <div className="flex justify-center gap-4 mb-8 w-full">
+      <div className="flex justify-center gap-4 mb-8 w-full flex-wrap">
         <LanguageSelector />
 
         <div className="flex items-center gap-4">

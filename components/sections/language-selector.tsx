@@ -13,23 +13,22 @@ import { Globe, X } from 'lucide-react';
 import { useState } from 'react';
 
 type Language =
-  | "ar"
-  | "en"
-  | "fr"
-  | "fa"
-  | "ms"
-  | "ur"
-  | "tr"
-  | "id"
-  | "ha"
-  | "es"
-  | "ru"
-  | "si"
-  | "am"
-  | "my"
-  | "hi"
-  | "uz";
-
+  | 'ar'
+  | 'en'
+  | 'fr'
+  | 'fa'
+  | 'ms'
+  | 'ur'
+  | 'tr'
+  | 'id'
+  | 'ha'
+  | 'es'
+  | 'ru'
+  | 'si'
+  | 'am'
+  | 'my'
+  | 'hi'
+  | 'uz';
 
 const languages = [
   { code: 'ar', name: 'عربي' },
@@ -57,7 +56,7 @@ export default function LanguageSelector() {
   const handleLanguageSelect = (code: Language) => {
     // console.log({code});
     setLanguage(code);
-    setOpen(false)
+    setOpen(false);
     // if (code === 'en' || code === 'ar') {
     //   setLanguage(code);
     //   setOpen(false);
