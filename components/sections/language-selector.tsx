@@ -93,7 +93,7 @@ export default function LanguageSelector() {
             <X className="h-4 w-4" />
           </Button>
         </DialogHeader>
-        <div className="p-6 pt-2">
+        <div className="p-6 pt-2 overflow-hidden overflow-y-auto max-h-[500px]">
           <div className="grid grid-cols-1 gap-1">
             {languages.map((lang) => (
               <button
