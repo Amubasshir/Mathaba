@@ -201,9 +201,7 @@ export default function FeedbackModal({
 
     if (!feedbackData.nationality || feedbackData.nationality === '') {
       setError(
-        language === 'ar'
-          ? 'يرجى تحديد الجنسية'
-          : 'Please select a nationality'
+        language === 'ar' ? 'يرجى تحديد الجنسية' : 'Please select a nationality'
       );
       return;
     }
@@ -255,7 +253,13 @@ export default function FeedbackModal({
         setIsOpen(false);
         setTimeout(() => {
           setIsSubmitted(false);
-          setFeedbackData({ rating: 0, message: '', ageRange: '', gender: '', nationality: '' });
+          setFeedbackData({
+            rating: 0,
+            message: '',
+            ageRange: '',
+            gender: '',
+            nationality: '',
+          });
         }, 300);
       }, 2000);
     } catch (error) {
@@ -473,9 +477,11 @@ export default function FeedbackModal({
                             'Comoros',
                             'Djibouti',
                             'Egypt',
+                            'France',
                             'Gambia',
                             'Guinea',
                             'Indonesia',
+                            'India',
                             'Iran',
                             'Iraq',
                             'Jordan',
@@ -499,6 +505,7 @@ export default function FeedbackModal({
                             'Senegal',
                             'Sierra Leone',
                             'Somalia',
+                            'Spain',
                             'Sudan',
                             'Syria',
                             'Tajikistan',
@@ -507,7 +514,7 @@ export default function FeedbackModal({
                             'Turkmenistan',
                             'United Arab Emirates',
                             'Uzbekistan',
-                            'Yemen'
+                            'Yemen',
                           ].map((country) => (
                             <option key={country} value={country}>
                               {country}
