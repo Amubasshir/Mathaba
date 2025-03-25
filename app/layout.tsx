@@ -1,3 +1,4 @@
+import GoogleAnalytics from '@/components/google-analytics';
 import { LanguageProvider } from '@/contexts/language-context';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className={`${inter.className} main-body`}>
+        <GoogleAnalytics />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
