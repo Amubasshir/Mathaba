@@ -15,7 +15,7 @@ const feedbackSchema = new mongoose.Schema(
     language: {
       type: String,
       required: true,
-      enum: ['en', 'ar'],
+      enum: ["ar", "en", "fr", "fa", "ms", "ur", "tr", "id", "ha", "es", "ru", "si", "am", "my", "hi", "uz"],
     },
     ageRange: {
       type: String,
