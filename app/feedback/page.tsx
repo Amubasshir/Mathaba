@@ -14,12 +14,19 @@ interface Location {
 }
 
 interface Feedback {
+  _id: string;
   rating: number;
   message: string;
   language: string;
   ageRange: string;
   gender: string;
-  location?: Location;
+  nationality: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    city: string;
+    country: string;
+  } | null;
   createdAt: string;
 }
 
@@ -251,6 +258,10 @@ export default function FeedbackPage() {
                         {t.locationNotAvailable}
                       </span>
                     )}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Nationality:</span>
+                    <span className="font-medium">{feedback.nationality}</span>
                   </div>
                 </div>
               </div>

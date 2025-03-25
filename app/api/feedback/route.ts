@@ -6,27 +6,21 @@ export async function POST(req: Request) {
   try {
     await dbConnect();
     const body = await req.json();
+    const { rating, message, language, ageRange, gender, nationality, location } = body;
 
-    // Validate all required fields
-    const requiredFields = ['rating', 'ageRange', 'gender', 'language'];
-    const missingFields = requiredFields.filter((field) => !body[field]);
-
-    if (missingFields.length > 0) {
-      console.error('Missing required fields:', missingFields);
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Missing required fields: ${missingFields.join(', ')}`,
-        },
-        { status: 400 }
-      );
+    // Validate required fields
+    if (!rating || !language || !ageRange || !gender || !nationality) {
+      return NextResponse.json({
+        success: false,
+        error: 'Missing required fields',
+      });
     }
 
     // Validate field values
     if (
-      typeof body.rating !== 'number' ||
-      body.rating < 0 ||
-      body.rating > 10
+      typeof rating !== 'number' ||
+      rating < 0 ||
+      rating > 10
     ) {
       return NextResponse.json(
         { success: false, error: 'Invalid rating value' },
@@ -43,7 +37,7 @@ export async function POST(req: Request) {
       '55-64',
       '65+',
     ];
-    if (!validAgeRanges.includes(body.ageRange)) {
+    if (!validAgeRanges.includes(ageRange)) {
       return NextResponse.json(
         { success: false, error: 'Invalid age range' },
         { status: 400 }
@@ -66,6 +60,7 @@ export async function POST(req: Request) {
       ageRange: body.ageRange,
       gender: body.gender,
       location: body.location || null,
+      nationality: body.nationality,
     };
 
     try {

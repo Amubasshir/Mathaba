@@ -28,6 +28,7 @@ export default function FeedbackModal({
     message: '',
     ageRange: '',
     gender: '',
+    nationality: '',
   });
   const [location, setLocation] = useState<Location | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -57,6 +58,15 @@ export default function FeedbackModal({
     }));
   };
 
+  const handleNationalityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    console.log('Nationality selected:', value);
+    setFeedbackData((prev) => ({
+      ...prev,
+      nationality: value,
+    }));
+  };
+
   const supportedLanguage = [
     {
       lang: 'en',
@@ -71,6 +81,7 @@ export default function FeedbackModal({
       locationAvailable: 'Location detected',
       ageRangeLabel: 'Age Range',
       genderLabel: 'Gender',
+      nationalityLabel: 'Nationality',
       ageRanges: [
         { value: '13-17', label: '13-17' },
         { value: '18-24', label: '18-24' },
@@ -99,6 +110,7 @@ export default function FeedbackModal({
       locationAvailable: 'تم تحديد الموقع',
       ageRangeLabel: 'الفئة العمرية',
       genderLabel: 'الجنس',
+      nationalityLabel: 'الجنسية',
       ageRanges: [
         { value: '13-17', label: '١٣-١٧' },
         { value: '18-24', label: '١٨-٢٤' },
@@ -187,6 +199,15 @@ export default function FeedbackModal({
       return;
     }
 
+    if (!feedbackData.nationality || feedbackData.nationality === '') {
+      setError(
+        language === 'ar'
+          ? 'يرجى تحديد الجنسية'
+          : 'Please select a nationality'
+      );
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -196,6 +217,7 @@ export default function FeedbackModal({
         message: feedbackData.message.trim(),
         ageRange: feedbackData.ageRange,
         gender: feedbackData.gender,
+        nationality: feedbackData.nationality,
         language,
         location,
       };
@@ -233,7 +255,7 @@ export default function FeedbackModal({
         setIsOpen(false);
         setTimeout(() => {
           setIsSubmitted(false);
-          setFeedbackData({ rating: 0, message: '', ageRange: '', gender: '' });
+          setFeedbackData({ rating: 0, message: '', ageRange: '', gender: '', nationality: '' });
         }, 300);
       }, 2000);
     } catch (error) {
@@ -419,6 +441,76 @@ export default function FeedbackModal({
                           {selectedLangData.genders.map((gender) => (
                             <option key={gender.value} value={gender.value}>
                               {gender.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {selectedLangData.nationalityLabel}
+                        </label>
+                        <select
+                          className="w-full p-2 border rounded-lg bg-white border-[#c8ad0d] focus:outline-none focus:ring-0"
+                          value={feedbackData.nationality}
+                          onChange={handleNationalityChange}
+                          dir={language === 'ar' ? 'rtl' : 'ltr'}
+                          disabled={isSubmitting}
+                        >
+                          <option value="">
+                            {selectedLangData.selectPlaceholder}
+                          </option>
+                          {[
+                            'Afghanistan',
+                            'Albania',
+                            'Algeria',
+                            'Azerbaijan',
+                            'Bahrain',
+                            'Bangladesh',
+                            'Brunei',
+                            'Burkina Faso',
+                            'Chad',
+                            'Comoros',
+                            'Djibouti',
+                            'Egypt',
+                            'Gambia',
+                            'Guinea',
+                            'Indonesia',
+                            'Iran',
+                            'Iraq',
+                            'Jordan',
+                            'Kazakhstan',
+                            'Kuwait',
+                            'Kyrgyzstan',
+                            'Lebanon',
+                            'Libya',
+                            'Malaysia',
+                            'Maldives',
+                            'Mali',
+                            'Mauritania',
+                            'Morocco',
+                            'Niger',
+                            'Nigeria',
+                            'Oman',
+                            'Pakistan',
+                            'Palestine',
+                            'Qatar',
+                            'Saudi Arabia',
+                            'Senegal',
+                            'Sierra Leone',
+                            'Somalia',
+                            'Sudan',
+                            'Syria',
+                            'Tajikistan',
+                            'Tunisia',
+                            'Turkey',
+                            'Turkmenistan',
+                            'United Arab Emirates',
+                            'Uzbekistan',
+                            'Yemen'
+                          ].map((country) => (
+                            <option key={country} value={country}>
+                              {country}
                             </option>
                           ))}
                         </select>
