@@ -305,13 +305,13 @@ export async function POST(req: Request) {
 
     // Step 3: Process with Assistant API
     try {
-      await openai.beta.threads.messages.create(threadId, {
-        role: 'user',
+    await openai.beta.threads.messages.create(threadId, {
+      role: 'user',
         content: processedInput || content,
-      });
+    });
 
-      const run = await openai.beta.threads.runs.create(threadId, {
-        assistant_id: assistantId,
+    const run = await openai.beta.threads.runs.create(threadId, {
+      assistant_id: assistantId,
         tools: [
           {
             type: 'function',
@@ -385,7 +385,7 @@ export async function POST(req: Request) {
       }
 
       // Get the final message
-      const messages = await openai.beta.threads.messages.list(threadId);
+    const messages = await openai.beta.threads.messages.list(threadId);
       const lastMessageContent = messages.data[0].content[0];
 
       // Store analytics data only once at the end

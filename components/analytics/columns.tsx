@@ -3,16 +3,47 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useLanguage } from '@/contexts/language-context';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, MapPin, MoreHorizontal } from 'lucide-react';
 import { ResponseModal } from './response-modal';
+
+// Column translations
+const columnLabels = {
+  en: {
+    source: 'Source',
+    language: 'Language',
+    response: 'Response',
+    userInput: 'User Input',
+    user: 'User',
+    time: 'Time',
+    actions: 'Actions',
+    unknown: 'Unknown',
+    copyId: 'Copy Interaction ID',
+    copyThreadId: 'Copy Thread ID',
+    copyResponse: 'Copy Full Response',
+  },
+  ar: {
+    source: 'المصدر',
+    language: 'اللغة',
+    response: 'الرد',
+    userInput: 'سؤال المستخدم',
+    user: 'المستخدم',
+    time: 'الوقت',
+    actions: 'الإجراءات',
+    unknown: 'غير معروف',
+    copyId: 'نسخ معرف التفاعل',
+    copyThreadId: 'نسخ معرف المحادثة',
+    copyResponse: 'نسخ الرد الكامل',
+  },
+};
 
 export type Interaction = {
   id: string;
@@ -34,9 +65,19 @@ export type Interaction = {
 export const columns: ColumnDef<Interaction>[] = [
   {
     accessorKey: 'source',
-    header: 'Source',
+    header: ({ table }) => {
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
+      return (
+        <div className="font-medium">
+          <Badge variant="outline" className="bg-gray-50">
+            {t.source}
+          </Badge>
+        </div>
+      );
+    },
     cell: ({ row }) => (
-      <div className="font-medium text-left">
+      <div className="font-medium">
         <Badge variant="outline" className="bg-gray-50">
           {row.getValue('source')}
         </Badge>
@@ -45,22 +86,22 @@ export const columns: ColumnDef<Interaction>[] = [
   },
   {
     accessorKey: 'language',
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
       return (
-        <div className="text-left">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="hover:bg-transparent px-0"
-          >
-            Language
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="hover:bg-transparent px-0"
+        >
+          {t.language}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => (
-      <div className="text-left">
+      <div>
         <Badge variant="secondary" className="font-medium">
           {row.getValue('language')}
         </Badge>
@@ -69,7 +110,11 @@ export const columns: ColumnDef<Interaction>[] = [
   },
   {
     accessorKey: 'assistantResponse',
-    header: 'Response',
+    header: ({ table }) => {
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
+      return t.response;
+    },
     cell: ({ row }) => {
       const text = row.getValue('assistantResponse') as string;
       return <ResponseModal response={text} />;
@@ -77,26 +122,29 @@ export const columns: ColumnDef<Interaction>[] = [
   },
   {
     accessorKey: 'userInput',
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
       return (
-        <div className="text-left">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="hover:bg-transparent px-0"
-          >
-            User Input
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="hover:bg-transparent px-0"
+        >
+          {t.userInput}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => {
       const text = row.getValue('userInput') as string;
+      const { language } = useLanguage();
+      const dir = language === 'ar' ? 'rtl' : 'ltr';
       return (
         <div
-          className="max-w-[300px] truncate font-medium text-left"
+          className="max-w-[300px] truncate font-medium"
           title={text}
+          dir={dir}
         >
           {text}
         </div>
@@ -105,11 +153,18 @@ export const columns: ColumnDef<Interaction>[] = [
   },
   {
     accessorKey: 'userId',
-    header: 'User',
+    header: ({ table }) => {
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
+      return t.user;
+    },
     cell: ({ row }) => {
       const location = row.original.location;
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
+      const dir = language === 'ar' ? 'rtl' : 'ltr';
       return (
-        <div className="font-medium text-left space-y-1">
+        <div className="font-medium space-y-1" dir={dir}>
           <Badge variant="outline" className="rounded-sm">
             {row.getValue('userId')}
           </Badge>
@@ -119,7 +174,7 @@ export const columns: ColumnDef<Interaction>[] = [
               <span>
                 {location.city && location.country
                   ? `${location.city}, ${location.country}`
-                  : location.city || location.country}
+                  : location.city || location.country || t.unknown}
               </span>
             </div>
           )}
@@ -129,33 +184,46 @@ export const columns: ColumnDef<Interaction>[] = [
   },
   {
     accessorKey: 'timestamp',
-    header: ({ column }) => {
+    header: ({ column, table }) => {
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
       return (
-        <div className="text-left">
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-            className="hover:bg-transparent px-0"
-          >
-            Time
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          className="hover:bg-transparent px-0"
+        >
+          {t.time}
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => {
       const timestamp = new Date(row.getValue('timestamp'));
-      const formattedDate = timestamp.toLocaleDateString(undefined, {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      });
-      const formattedTime = timestamp.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
+      const { language } = useLanguage();
+      const dir = language === 'ar' ? 'rtl' : 'ltr';
+
+      const formattedDate = timestamp.toLocaleDateString(
+        language === 'ar' ? 'ar-SA' : undefined,
+        {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          timeZone: 'Asia/Riyadh',
+        }
+      );
+
+      const formattedTime = timestamp.toLocaleTimeString(
+        language === 'ar' ? 'ar-SA' : undefined,
+        {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Asia/Riyadh',
+        }
+      );
+
       return (
-        <div className="font-medium text-left">
+        <div className="font-medium" dir={dir}>
           <div>{formattedTime}</div>
           <div className="text-sm text-muted-foreground">{formattedDate}</div>
         </div>
@@ -166,24 +234,27 @@ export const columns: ColumnDef<Interaction>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const interaction = row.original;
+      const { language } = useLanguage();
+      const t = columnLabels[language as keyof typeof columnLabels] || columnLabels.en;
+      const dir = language === 'ar' ? 'rtl' : 'ltr';
 
       return (
-        <div className="text-left">
+        <div dir={dir}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t.actions}</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{t.actions}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(interaction.id)}
                 className="cursor-pointer"
               >
-                Copy Interaction ID
+                {t.copyId}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
@@ -191,7 +262,7 @@ export const columns: ColumnDef<Interaction>[] = [
                 }
                 className="cursor-pointer"
               >
-                Copy Thread ID
+                {t.copyThreadId}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
@@ -199,7 +270,7 @@ export const columns: ColumnDef<Interaction>[] = [
                 }
                 className="cursor-pointer"
               >
-                Copy Full Response
+                {t.copyResponse}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
