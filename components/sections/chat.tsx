@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/language-context';
 import { Send } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -26,6 +27,7 @@ export default function Chat({
   const [error, setError] = useState<string | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<any>(null);
+  const [userId, setUserId] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { dir, t, categories, language } = useLanguage();
   const [thinkingDots, setThinkingDots] = useState('');
@@ -122,6 +124,16 @@ export default function Chat({
     }
   }, []);
 
+  // Initialize userId on component mount
+  useEffect(() => {
+    let storedUserId = localStorage.getItem('userId');
+    if (!storedUserId) {
+      storedUserId = uuidv4();
+      localStorage.setItem('userId', storedUserId);
+    }
+    setUserId(storedUserId);
+  }, []);
+
   const createThread = async () => {
     try {
       const response = await fetch(`/api/chat/thread?language=${language}`, {
@@ -203,6 +215,7 @@ export default function Chat({
               assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
               language,
               location: userLocation,
+              userId: userId,
             }),
           });
 

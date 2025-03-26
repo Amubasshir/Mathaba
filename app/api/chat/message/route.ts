@@ -216,6 +216,7 @@ export async function POST(req: Request) {
       toolCallId,
       language = 'en',
       location,
+      userId,
     } = await req.json();
 
     // Handle tool call responses
@@ -389,7 +390,7 @@ export async function POST(req: Request) {
 
       // Store analytics data only once at the end
       const analyticsData = {
-        userId: 'anonymous',
+        userId: userId || 'anonymous',
         userInput: content,
         assistantResponse:
           lastMessageContent.type === 'text'
