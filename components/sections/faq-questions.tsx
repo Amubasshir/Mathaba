@@ -54,12 +54,12 @@ export default function FAQQuestions({ onQuestionSelect }: FAQQuestionsProps) {
               className="block w-full"
             />
           </SelectTrigger>
-          <SelectContent dir={dir}>
+          <SelectContent dir={dir} className=' max-w-[420px]'>
             {category.category.questions.map((item: any, index: number) => (
               <SelectItem
                 key={index}
                 value={item.question[language] || item.question.en}
-                className="w-full"
+                className="w-full px-2 text-wrap"
                 dir={dir}
               >
                 <span className="block w-full">
