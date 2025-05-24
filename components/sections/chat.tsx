@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
-import { Send } from "lucide-react";
+import { Send, Sparkles, SquareArrowOutUpRight, Star } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -184,6 +185,8 @@ export default function Chat({
       {
         role: "assistant",
         content: suggestion?.[`answers_${language}`] as string,
+        ref: suggestion?.Ref,
+        url: suggestion?.URL,
       },
     ];
 
@@ -194,8 +197,6 @@ export default function Chat({
       }
       return newMessages;
     });
-
-
   };
 
   const createThread = async () => {
@@ -442,7 +443,7 @@ export default function Chat({
 
     setIsLoading(false);
   };
-
+  
   // Modify handleCategoryQuestionSelect to store interactions
   const handleCategoryQuestionSelect = (question: string, answer: string) => {
     if (isLoading) return;
@@ -594,6 +595,30 @@ export default function Chat({
                       : linkifyText(message.content)}
                   </p>
                 )}
+
+                {message.role === "assistant" &&<br />}
+                <div className="flex flex-col gap-2 -mt-3">
+                  {message?.url && (
+                    <Link href={message?.url} target="_blank">
+                      {" "}
+                      <span className=" bg-gray-200 text-blue-700 text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                        Url: {message?.url}{" "}
+                        <SquareArrowOutUpRight className="h-3 w-3" />
+                      </span>
+                    </Link>
+                  )}
+                  {message?.ref && (
+                    <span className=" bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                      Ref: {message?.ref}
+                    </span>
+                  )}
+                  {message.role === "assistant" && language !== "ar" && (
+                    <span className=" text-gray-700 text-xs pr-2 py-0.5 rounded-full inline-flex items-center gap-1 italic">
+                      <Sparkles className="h-4 w-4 text-theme-gold" />{" "}
+                      Translated by AI
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
