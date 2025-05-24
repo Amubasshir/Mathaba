@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/language-context';
-import { Send } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/language-context";
+import { Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface Message {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 }
 
@@ -22,47 +22,84 @@ export default function Chat({
   setIsManualChat: (isManualChat: boolean) => void;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<any>(null);
-  const [userId, setUserId] = useState<string>('');
+  const [userId, setUserId] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { dir, t, categories, language } = useLanguage();
-  const [thinkingDots, setThinkingDots] = useState('');
+  const [thinkingDots, setThinkingDots] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
-  const [streamingText, setStreamingText] = useState('');
+  const [streamingText, setStreamingText] = useState("");
   const lastStoredInteraction = useRef<{
     userInput: string;
     timestamp: number;
   } | null>(null);
-
   // Add typewriter effect states
-  const [typingText, setTypingText] = useState('');
-  const [fullText, setFullText] = useState('');
+  const [typingText, setTypingText] = useState("");
+  const [fullText, setFullText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [currentTypingIndex, setCurrentTypingIndex] = useState(-1);
 
-  const [textareaHeight, setTextareaHeight] = useState('24px');
+  const [textareaHeight, setTextareaHeight] = useState("24px");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+
+  console.log(language, suggestions);
+  useEffect(() => {
+    if (!inputValue.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    const fetchSuggestions = async () => {
+      try {
+        setIsFetchingSuggestions(true);
+        const response = await fetch(
+          `/api/suggestions?query=${encodeURIComponent(
+            inputValue
+          )}&language=${language}`
+        );
+
+        // if (!response.ok) throw new Error('Failed to fetch suggestions');
+        const data = await response.json();
+        console.log("Suggestions data:", data);
+
+        setSuggestions(data.suggestions);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      } finally {
+        setIsFetchingSuggestions(false);
+      }
+    };
+
+    const timer = setTimeout(() => {
+      fetchSuggestions();
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(timer);
+  }, [inputValue, language]);
 
   // Animate thinking dots
   useEffect(() => {
     if (isLoading) {
       const interval = setInterval(() => {
         setThinkingDots((prev) => {
-          if (prev === '...') return '';
-          return prev + '.';
+          if (prev === "...") return "";
+          return prev + ".";
         });
       }, 500);
       return () => clearInterval(interval);
     } else {
-      setThinkingDots('');
+      setThinkingDots("");
     }
   }, [isLoading]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -118,7 +155,7 @@ export default function Chat({
             });
           }
         } catch (error) {
-          console.error('Error getting location:', error);
+          console.error("Error getting location:", error);
         }
       });
     }
@@ -126,22 +163,49 @@ export default function Chat({
 
   // Initialize userId on component mount
   useEffect(() => {
-    let storedUserId = localStorage.getItem('userId');
+    let storedUserId = localStorage.getItem("userId");
     if (!storedUserId) {
       storedUserId = uuidv4();
-      localStorage.setItem('userId', storedUserId);
+      localStorage.setItem("userId", storedUserId);
     }
     setUserId(storedUserId);
   }, []);
 
+  const handleSelectSuggestion = (suggestion: any) => {
+    setSelectedSuggestion(suggestion);
+    setSuggestions([]);
+    setInputValue("");
+
+    let fastMessage = [
+      {
+        role: "user",
+        content: suggestion?.[`questions_${language}`] as string,
+      },
+      {
+        role: "assistant",
+        content: suggestion?.[`answers_${language}`] as string,
+      },
+    ];
+
+    setMessages((prev) => {
+      let newMessages = [...prev];
+      if (newMessages.length > 0) {
+        newMessages = [...newMessages, ...fastMessage];
+      }
+      return newMessages;
+    });
+
+  };
+
+  console.log(suggestions, selectedSuggestion?.["questions_en"], messages);
   const createThread = async () => {
     try {
       const response = await fetch(`/api/chat/thread?language=${language}`, {
-        method: 'POST',
+        method: "POST",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create thread');
+        throw new Error("Failed to create thread");
       }
 
       const data = await response.json();
@@ -151,7 +215,7 @@ export default function Chat({
       if (data.greeting) {
         setMessages([
           {
-            role: 'assistant',
+            role: "assistant",
             content: data.greeting,
           },
         ]);
@@ -159,29 +223,29 @@ export default function Chat({
 
       return data.threadId;
     } catch (err) {
-      setError('Failed to initialize chat');
+      setError("Failed to initialize chat");
       return null;
     }
   };
 
   const moderateMessage = async (content: string) => {
     try {
-      const response = await fetch('/api/chat/moderate', {
-        method: 'POST',
+      const response = await fetch("/api/chat/moderate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ input: content }),
       });
 
       if (!response.ok) {
-        throw new Error('Moderation request failed');
+        throw new Error("Moderation request failed");
       }
 
       const data = await response.json();
       return data.flagged;
     } catch (err) {
-      setError('Message moderation failed');
+      setError("Message moderation failed");
       return true;
     }
   };
@@ -193,7 +257,7 @@ export default function Chat({
         newThreadId = await createThread();
         setThreadId(newThreadId);
         if (!newThreadId) {
-          throw new Error('Failed to create chat thread');
+          throw new Error("Failed to create chat thread");
         }
       }
 
@@ -204,15 +268,15 @@ export default function Chat({
 
       while (retries >= 0) {
         try {
-          response = await fetch('/api/chat/message', {
-            method: 'POST',
+          response = await fetch("/api/chat/message", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               threadId: newThreadId,
               content,
-              assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+              assistantId: "asst_6JH9SIKjfPQrfApGdC0am63k",
               language,
               location: userLocation,
               userId: userId,
@@ -242,7 +306,7 @@ export default function Chat({
       }
 
       if (!response?.ok) {
-        throw error || new Error('Failed to send message after retries');
+        throw error || new Error("Failed to send message after retries");
       }
 
       const data = await response.json();
@@ -250,34 +314,34 @@ export default function Chat({
       // If the response includes a tool call
       if (data.toolCalls && data.toolCalls.length > 0) {
         const toolCall = data.toolCalls[0];
-        if (toolCall.function.name === 'search_web') {
+        if (toolCall.function.name === "search_web") {
           const searchQuery = JSON.parse(toolCall.function.arguments).query;
 
           // Make the web search request
-          const searchResponse = await fetch('/api/search', {
-            method: 'POST',
+          const searchResponse = await fetch("/api/search", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({ query: searchQuery }),
           });
 
           if (!searchResponse.ok) {
-            throw new Error('Failed to perform web search');
+            throw new Error("Failed to perform web search");
           }
 
           const searchResults = await searchResponse.json();
 
           // Send the search results back to continue the conversation
-          const finalResponse = await fetch('/api/chat/message', {
-            method: 'POST',
+          const finalResponse = await fetch("/api/chat/message", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               threadId: newThreadId,
               content: JSON.stringify(searchResults),
-              assistantId: 'asst_6JH9SIKjfPQrfApGdC0am63k',
+              assistantId: "asst_6JH9SIKjfPQrfApGdC0am63k",
               toolCallId: toolCall.id,
             }),
           });
@@ -285,7 +349,7 @@ export default function Chat({
           if (!finalResponse.ok) {
             const errorData = await finalResponse.json().catch(() => ({}));
             throw new Error(
-              errorData.error || 'Failed to process search results'
+              errorData.error || "Failed to process search results"
             );
           }
 
@@ -296,8 +360,8 @@ export default function Chat({
 
       return data.message;
     } catch (err) {
-      console.error('Error in sendMessage:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send message');
+      console.error("Error in sendMessage:", err);
+      setError(err instanceof Error ? err.message : "Failed to send message");
       return null;
     }
   };
@@ -305,14 +369,14 @@ export default function Chat({
   const streamText = (text: string) => {
     // Remove ** characters and source references from the text
     const cleanText = text
-      .replace(/\*\*/g, '')
-      .replace(/\[source'\d+:\d+\]/g, '')
-      .replace(/\【source'\d+:\d+\】/g, '')
-      .replace(/\(source'\d+:\d+\)/g, '')
+      .replace(/\*\*/g, "")
+      .replace(/\[source'\d+:\d+\]/g, "")
+      .replace(/\【source'\d+:\d+\】/g, "")
+      .replace(/\(source'\d+:\d+\)/g, "")
       .trim();
 
     setIsStreaming(true);
-    setStreamingText('');
+    setStreamingText("");
     let index = 0;
 
     const streamInterval = setInterval(() => {
@@ -338,24 +402,24 @@ export default function Chat({
     if (!inputValue.trim() || isLoading) return;
 
     const content = inputValue.trim();
-    setInputValue('');
+    setInputValue("");
     setError(null);
 
     // Check moderation
     const isFlagged = await moderateMessage(content);
     if (isFlagged) {
-      setError('This message contains inappropriate content');
+      setError("This message contains inappropriate content");
       return;
     }
 
     // Add user message
-    setMessages((prev) => [...prev, { role: 'user', content }]);
+    setMessages((prev) => [...prev, { role: "user", content }]);
     setIsLoading(true);
 
     // Add temporary "thinking" message
     setMessages((prev) => [
       ...prev,
-      { role: 'assistant', content: t('thinking') || 'thinking' },
+      { role: "assistant", content: t("thinking") || "thinking" },
     ]);
 
     // Get assistant response
@@ -365,12 +429,12 @@ export default function Chat({
     setMessages((prev) => {
       const newMessages = prev.slice(0, -1);
       if (response) {
-        newMessages.push({ role: 'assistant', content: '' }); // Empty content initially
+        newMessages.push({ role: "assistant", content: "" }); // Empty content initially
         streamText(response); // Remove content parameter since we don't need it anymore
       } else {
         newMessages.push({
-          role: 'assistant',
-          content: 'Sorry, I encountered an error. Please try again.',
+          role: "assistant",
+          content: "Sorry, I encountered an error. Please try again.",
         });
       }
       return newMessages;
@@ -384,20 +448,20 @@ export default function Chat({
     if (isLoading) return;
 
     setError(null);
-    setMessages((prev) => [...prev, { role: 'user', content: question }]);
+    setMessages((prev) => [...prev, { role: "user", content: question }]);
     setIsLoading(true);
 
     // Add temporary "thinking" message
     setMessages((prev) => [
       ...prev,
-      { role: 'assistant', content: t('thinking') || 'thinking' },
+      { role: "assistant", content: t("thinking") || "thinking" },
     ]);
 
     // Simulate API delay then stream
     setTimeout(() => {
       setMessages((prev) => {
         const newMessages = prev.slice(0, -1);
-        newMessages.push({ role: 'assistant', content: '' });
+        newMessages.push({ role: "assistant", content: "" });
         return newMessages;
       });
       streamText(answer); // Pass question as user input
@@ -406,7 +470,7 @@ export default function Chat({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
@@ -418,7 +482,7 @@ export default function Chat({
     }
     setInputValue(e.target.value);
     // Reset height to auto to get the correct scrollHeight
-    e.target.style.height = 'auto';
+    e.target.style.height = "auto";
     // Set new height based on scrollHeight, with a maximum of 120px
     const newHeight = Math.min(e.target.scrollHeight, 120);
     e.target.style.height = `${newHeight}px`;
@@ -478,7 +542,7 @@ export default function Chat({
   return (
     <div
       className={`flex flex-col w-full max-w-3xl mx-auto ${
-        messages.length > 0 ? 'bg-transparent' : ''
+        messages.length > 0 ? "bg-transparent" : ""
       }`}
     >
       {/* Messages Container */}
@@ -492,30 +556,30 @@ export default function Chat({
             <div
               key={index}
               className={`flex ${
-                message.role === 'user' ? 'justify-end' : 'justify-start'
+                message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
               <div
                 className={`max-w-[80%] p-4 rounded-[20px] ${
-                  message.role === 'user'
-                    ? 'bg-[#6b6291] text-white'
-                    : 'bg-white shadow-sm'
+                  message.role === "user"
+                    ? "bg-[#6b6291] text-white"
+                    : "bg-white shadow-sm"
                 } ${
                   index === messages.length - 1 &&
-                  message.role === 'assistant' &&
-                  message.content === 'thinking'
-                    ? 'w-[60px]'
+                  message.role === "assistant" &&
+                  message.content === "thinking"
+                    ? "w-[60px]"
                     : index === messages.length - 1 &&
-                      message.role === 'assistant' &&
+                      message.role === "assistant" &&
                       isStreaming
-                    ? 'w-[500px]'
-                    : ''
+                    ? "w-[500px]"
+                    : ""
                 }`}
                 dir={dir}
               >
                 {index === messages.length - 1 &&
-                message.role === 'assistant' &&
-                message.content === 'thinking' ? (
+                message.role === "assistant" &&
+                message.content === "thinking" ? (
                   <div className="w-[32px] h-[20px] flex items-center justify-center mx-auto">
                     <span className="inline-block min-w-[32px] text-center">
                       {thinkingDots}
@@ -524,7 +588,7 @@ export default function Chat({
                 ) : (
                   <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
                     {index === messages.length - 1 &&
-                    message.role === 'assistant' &&
+                    message.role === "assistant" &&
                     isStreaming
                       ? linkifyText(streamingText)
                       : linkifyText(message.content)}
@@ -547,25 +611,41 @@ export default function Chat({
       {/* Input Container */}
       <div className="sticky bottom-0 z-10 bg-white">
         <div className="relative flex items-center p-0 py-4">
+          {suggestions?.length > 0 && (
+            <div className="max-h-44 overflow-hidden overflow-y-auto bg-white shadow-sm w-full absolute bottom-20 rounded-xl p-2">
+              <ul>
+                {suggestions?.map((suggestion) => (
+                  <li
+                    key={suggestion?.id}
+                    className="cursor-pointer text-black hover:bg-gray-100 p-2 rounded"
+                    onClick={() => handleSelectSuggestion(suggestion)}
+                  >
+                    {suggestion?.questions_en}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div className="relative w-full rounded-xl">
             {/* <div className="relative flex items-center rounded-lg border border-gray-200"> */}
             <div
               className="flex-1 px-4 py-3 rounded-full bg-white"
               style={{
                 boxShadow:
-                  'rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px',
+                  "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px",
               }}
             >
               <div
                 className={`flex ${
-                  dir === 'rtl' ? 'flex-row-reverse' : 'flex-row'
+                  dir === "rtl" ? "flex-row-reverse" : "flex-row"
                 } items-center gap-2 text-gray-600`}
               >
                 <textarea
                   value={inputValue}
                   onChange={handleTextareaInput}
                   onKeyPress={handleKeyPress}
-                  placeholder={t('ask.me')}
+                  placeholder={t("ask.me")}
                   className="w-full focus:outline-none resize-none overflow-hidden
                       scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400
                       scrollbar-thumb-rounded-full bg-transparent"
@@ -586,6 +666,7 @@ export default function Chat({
                 </Button>
               </div>
             </div>
+
             {/* </div> */}
           </div>
         </div>
