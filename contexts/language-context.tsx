@@ -1117,8 +1117,36 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
   undefined
 );
 
+// export function LanguageProvider({ children }: { children: React.ReactNode }) {
+//   const [language, setLanguage] = useState<Language>("ar");
+//   const dir = language === "ar" ? "rtl" : "ltr";
+
+//   const t = (key: string) => {
+//     return (
+//       translations[language][key as keyof (typeof translations)["en"]] || key
+//     );
+//   };
+
+//   useEffect(() => {
+//     document.documentElement.dir = dir;
+//     document.documentElement.lang = language;
+//   }, [language, dir]);
+
+//   return (
+//     <LanguageContext.Provider
+//       value={{ language, setLanguage, dir, t, categories: categories }}
+//     >
+//       {children}
+//     </LanguageContext.Provider>
+//   );
+// }
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useState<Language>(() => {
+    const storedLanguage = localStorage.getItem('language') as Language | null;
+    return storedLanguage || 'ar';
+  });
+
   const dir = language === "ar" ? "rtl" : "ltr";
 
   const t = (key: string) => {
@@ -1130,6 +1158,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     document.documentElement.dir = dir;
     document.documentElement.lang = language;
+    localStorage.setItem('language', language);
   }, [language, dir]);
 
   return (
