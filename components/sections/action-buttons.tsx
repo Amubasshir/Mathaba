@@ -244,7 +244,7 @@ export default function ActionButtons({
 
   return (
     <div className="flex flex-col gap-4 w-full mb-8">
-      <div>
+      {/* <div>
         <Button
           variant="primary"
           className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-full"
@@ -258,7 +258,7 @@ export default function ActionButtons({
             <FAQQuestions onQuestionSelect={onQuestionSelect} />
           </div>
         )}
-      </div>
+      </div> */}
 
       <div>
         <Button

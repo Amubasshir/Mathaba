@@ -103,9 +103,12 @@ export default function Chat({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, typingText]);
+//  ! don't remove this, it will scroll to bottom when new message is added
+//   useEffect(() => {
+//     if(!selectedSuggestion){
+//         scrollToBottom();
+//     }
+//   }, [messages, typingText, selectedSuggestion]);
 
   // Typewriter effect
   useEffect(() => {
@@ -539,7 +542,8 @@ export default function Chat({
         return <span key={index}>{part}</span>;
       });
   };
-console.log(messages)
+
+  
   return (
     <div
       className={`flex flex-col w-full max-w-3xl mx-auto ${
@@ -614,7 +618,7 @@ console.log(messages)
                   {message.role === "assistant" && language !== "ar" && (
                     <span className=" text-gray-700 text-xs pr-2 py-0.5 rounded-full inline-flex items-center gap-1 italic">
                       <Sparkles className="h-4 w-4 text-theme-gold" />{" "}
-                      Translated by AI
+                      Al translation from official Arabic source.
                     </span>
                   )}
                 </div>
