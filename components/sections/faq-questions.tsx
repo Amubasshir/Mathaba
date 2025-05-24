@@ -54,7 +54,7 @@ export default function FAQQuestions({ onQuestionSelect }: FAQQuestionsProps) {
               className="block w-full"
             />
           </SelectTrigger>
-          <SelectContent dir={dir} className=' max-w-[420px]'>
+          <SelectContent dir={dir} className='max-w-[350px] md:max-w-[420px] mx-auto'>
             {category.category.questions.map((item: any, index: number) => (
               <SelectItem
                 key={index}
