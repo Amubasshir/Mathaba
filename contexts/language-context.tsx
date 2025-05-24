@@ -1141,12 +1141,42 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 //   );
 // }
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>(() => {
-    const storedLanguage = localStorage.getItem('language') as Language | null;
-    return storedLanguage || 'ar';
-  });
 
+//! v2
+// export function LanguageProvider({ children }: { children: React.ReactNode }) {
+//   const [language, setLanguage] = useState<Language>(() => {
+//     const storedLanguage = localStorage.getItem('language') as Language | null;
+//     return storedLanguage || 'ar';
+//   });
+
+//   const dir = language === "ar" ? "rtl" : "ltr";
+
+//   const t = (key: string) => {
+//     return (
+//       translations[language][key as keyof (typeof translations)["en"]] || key
+//     );
+//   };
+
+//   useEffect(() => {
+//     document.documentElement.dir = dir;
+//     document.documentElement.lang = language;
+//     localStorage.setItem('language', language);
+//   }, [language, dir]);
+
+//   return (
+//     <LanguageContext.Provider
+//       value={{ language, setLanguage, dir, t, categories: categories }}
+//     >
+//       {children}
+//     </LanguageContext.Provider>
+//   );
+// }
+
+//!v3
+
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  // Initialize with default 'ar' (Arabic)
+  const [language, setLanguage] = useState<Language>("ar");
   const dir = language === "ar" ? "rtl" : "ltr";
 
   const t = (key: string) => {
@@ -1156,6 +1186,18 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    // This effect runs only on the client side
+    const storedLanguage = localStorage.getItem('language') as Language | null;
+    if (storedLanguage) {
+      setLanguage(storedLanguage);
+    } else {
+      // For first-time visitors, set to Arabic and save to localStorage
+      localStorage.setItem('language', 'ar');
+    }
+  }, []);
+
+  useEffect(() => {
+    // Update document attributes and save to localStorage when language changes
     document.documentElement.dir = dir;
     document.documentElement.lang = language;
     localStorage.setItem('language', language);
