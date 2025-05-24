@@ -195,9 +195,9 @@ export default function Chat({
       return newMessages;
     });
 
+
   };
 
-  console.log(suggestions, selectedSuggestion?.["questions_en"], messages);
   const createThread = async () => {
     try {
       const response = await fetch(`/api/chat/thread?language=${language}`, {
