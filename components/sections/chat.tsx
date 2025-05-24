@@ -700,7 +700,7 @@ console.log(messages)
                     className="cursor-pointer text-[#646263] hover:bg-gray-100 p-2 rounded"
                     onClick={() => handleSelectSuggestion(suggestion)}
                   >
-                    {suggestion?.questions_en}
+                    {suggestion?.[`questions_${language}`]}
                   </li>
                 ))}
               </ul>
