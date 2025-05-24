@@ -602,19 +602,27 @@ export default function Chat({
 
                 {message.role === "assistant" &&<br />}
                 <div className="flex flex-col gap-2 -mt-3">
-                  {message?.url && (
+                  {/* {message?.url && (
                     <Link href={message?.url} target="_blank">
                       {" "}
                       <span className=" bg-gray-200 text-blue-700 text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1 underline">
                         Url: {message?.url}
                       </span>
                     </Link>
-                  )}
+                  )} */}
                   {message?.ref && (
+                    <Link href={message?.url ? message.url : "#"} target="_blank">
+                      {" "}
+                      <span className=" bg-gray-200 text-blue-700 text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1 underline">
+                      Ref: {message?.ref}
+                      </span>
+                    </Link>
+                  )}
+                  {/* {message?.ref && (
                     <span className=" bg-gray-200 text-gray-700 text-xs px-2 rounded-lg inline-flex items-center gap-1 py-1">
                       Ref: {message?.ref}
                     </span>
-                  )}
+                  )} */}
                   {message.role === "assistant" && language !== "ar" && (
                     <span className=" text-gray-700 text-xs pr-2 py-0.5 rounded-full inline-flex items-center gap-1 italic">
                       <Sparkles className="h-4 w-4 text-theme-gold" />{" "}

@@ -1141,41 +1141,9 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 //   );
 // }
 
-
-//! v2
-// export function LanguageProvider({ children }: { children: React.ReactNode }) {
-//   const [language, setLanguage] = useState<Language>(() => {
-//     const storedLanguage = localStorage.getItem('language') as Language | null;
-//     return storedLanguage || 'ar';
-//   });
-
-//   const dir = language === "ar" ? "rtl" : "ltr";
-
-//   const t = (key: string) => {
-//     return (
-//       translations[language][key as keyof (typeof translations)["en"]] || key
-//     );
-//   };
-
-//   useEffect(() => {
-//     document.documentElement.dir = dir;
-//     document.documentElement.lang = language;
-//     localStorage.setItem('language', language);
-//   }, [language, dir]);
-
-//   return (
-//     <LanguageContext.Provider
-//       value={{ language, setLanguage, dir, t, categories: categories }}
-//     >
-//       {children}
-//     </LanguageContext.Provider>
-//   );
-// }
-
 //!v3
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Initialize with default 'ar' (Arabic)
   const [language, setLanguage] = useState<Language>("ar");
   const dir = language === "ar" ? "rtl" : "ltr";
 
@@ -1185,22 +1153,21 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  useEffect(() => {
-    // This effect runs only on the client side
+ useEffect(() => {
     const storedLanguage = localStorage.getItem('language') as Language | null;
-    if (storedLanguage) {
-      setLanguage(storedLanguage);
+    if (storedLanguage && storedLanguage !== language) {
+      setLanguage(storedLanguage); 
     } else {
-      // For first-time visitors, set to Arabic and save to localStorage
-      localStorage.setItem('language', 'ar');
+      localStorage.setItem('language', language);
     }
   }, []);
 
   useEffect(() => {
-    // Update document attributes and save to localStorage when language changes
     document.documentElement.dir = dir;
     document.documentElement.lang = language;
+    console.log("Language changed to:", language);
     localStorage.setItem('language', language);
+    console.log("Document direction set to:", language);
   }, [language, dir]);
 
   return (
@@ -1211,6 +1178,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     </LanguageContext.Provider>
   );
 }
+
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
