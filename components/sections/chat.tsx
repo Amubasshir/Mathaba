@@ -539,7 +539,7 @@ export default function Chat({
         return <span key={index}>{part}</span>;
       });
   };
-
+console.log(messages)
   return (
     <div
       className={`flex flex-col w-full max-w-3xl mx-auto ${
@@ -601,14 +601,13 @@ export default function Chat({
                   {message?.url && (
                     <Link href={message?.url} target="_blank">
                       {" "}
-                      <span className=" bg-gray-200 text-blue-700 text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1">
-                        Url: {message?.url}{" "}
-                        <SquareArrowOutUpRight className="h-3 w-3" />
+                      <span className=" bg-gray-200 text-blue-700 text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1 underline">
+                        Url: {message?.url}
                       </span>
                     </Link>
                   )}
                   {message?.ref && (
-                    <span className=" bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                    <span className=" bg-gray-200 text-gray-700 text-xs px-2 rounded-lg inline-flex items-center gap-1 py-1">
                       Ref: {message?.ref}
                     </span>
                   )}
@@ -636,7 +635,7 @@ export default function Chat({
       {/* Input Container */}
       <div className="sticky bottom-0 z-10 bg-white">
         <div className="relative flex items-center p-0 py-4">
-          {suggestions?.length > 0 && (
+          {/* {suggestions?.length > 0 && (
             <div className="max-h-44 overflow-hidden overflow-y-auto bg-white shadow-sm w-full absolute bottom-20 rounded-xl p-2">
               <ul>
                 {suggestions?.map((suggestion) => (
@@ -650,12 +649,12 @@ export default function Chat({
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
 
           <div className="relative w-full rounded-xl">
             {/* <div className="relative flex items-center rounded-lg border border-gray-200"> */}
             <div
-              className="flex-1 px-4 py-3 rounded-full bg-white"
+              className="flex-1 px-4 py-3 rounded-[24px] bg-white"
               style={{
                 boxShadow:
                   "rgba(50, 50, 93, 0.05) 0px 30px 60px -12px inset, rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset, rgba(50, 50, 93, 0.05) 0px 10px 10px -7px",
@@ -690,6 +689,23 @@ export default function Chat({
                   <span className="sr-only">Send</span>
                 </Button>
               </div>
+
+              {/* suggestions */}
+               {suggestions?.length > 0 && (
+            <div className="max-h-44 overflow-hidden overflow-y-auto bg-white w-full border-t-2 pt-2 mt-3">
+              <ul>
+                {suggestions?.map((suggestion) => (
+                  <li
+                    key={suggestion?.id}
+                    className="cursor-pointer text-[#646263] hover:bg-gray-100 p-2 rounded"
+                    onClick={() => handleSelectSuggestion(suggestion)}
+                  >
+                    {suggestion?.questions_en}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
             </div>
 
             {/* </div> */}

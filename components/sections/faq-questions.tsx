@@ -36,6 +36,8 @@ export default function FAQQuestions({ onQuestionSelect }: FAQQuestionsProps) {
     }
   };
 
+  
+
   return (
     <>
       {categories.map((category: any) => (
