@@ -610,13 +610,18 @@ export default function Chat({
                       </span>
                     </Link>
                   )} */}
-                  {message?.ref && (
+                  {message?.ref && message?.url && (
                     <Link href={message?.url ? message.url : "#"} target="_blank">
                       {" "}
                       <span className=" bg-gray-200 text-blue-700 text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1 underline">
                       Ref: {message?.ref}
                       </span>
                     </Link>
+                  )}
+                  {message?.ref && !message?.url && (
+                      <span className=" bg-gray-200 text-blue-700 text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1 underline">
+                      Ref: {message?.ref}
+                      </span>
                   )}
                   {/* {message?.ref && (
                     <span className=" bg-gray-200 text-gray-700 text-xs px-2 rounded-lg inline-flex items-center gap-1 py-1">
