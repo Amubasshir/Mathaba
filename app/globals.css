@@ -83,7 +83,7 @@
 
 @media only screen and (max-width: 768px) {
   .main-body:before {
-    content: ' ';
+    content: " ";
     display: block;
     position: fixed;
     left: 0;
@@ -91,7 +91,7 @@
     width: 100%;
     height: 100%;
     opacity: 0.1;
-    background-image: url('../public/bg-removebg-preview.png');
+    background-image: url("../public/bg-removebg-preview.png");
     background-repeat: no-repeat;
     background-position: 30% bottom;
     background-size: 160%;
@@ -140,4 +140,38 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+}
+
+/* custom colors */
+.text-color-1 {
+  color: #c8ad0d;
+}
+.border-color-1 {
+  border-color: #c8ad0d;
+}
+.btn-bg {
+  /* bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 */
+  background-color: #c8ad0d;
+  /* background-color: red; */
+}
+.btn-bg:hover {
+  background-color: rgb(200 173 13 / 0.9);
+  opacity: 0.9;
+}
+
+
+.container-red .text-color-1 {
+  color: #ad0610;
+}
+.container-red .border-color-1 {
+  border-color: #ad0610 !important;
+}
+.container-red .btn-bg {
+  /* bg-[#ad0610] hover:bg-[#ad0610]/90 */
+  background-color: #ad0610 !important;
+  /* background-color: red; */
+}
+.container-red .btn-bg:hover {
+  background-color: rgb(173 6 16 / 0.9);
+  opacity: 0.9;
 }

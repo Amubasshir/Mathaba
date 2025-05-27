@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useLanguage } from '@/contexts/language-context';
-import { Parser } from 'json2csv';
-import { Download, Loader2, MapPin } from 'lucide-react';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useLanguage } from "@/contexts/language-context";
+import { Parser } from "json2csv";
+import { Download, Loader2, MapPin } from "lucide-react";
+import moment from "moment";
+import { useEffect, useState } from "react";
 
 interface Location {
   latitude: number;
@@ -44,37 +44,37 @@ interface FeedbackResponse {
 
 const translations = {
   en: {
-    title: 'All Feedbacks',
-    downloadCSV: 'Download CSV',
-    language: 'Language',
-    noFeedback: 'No feedback available',
-    rating: 'Rating',
-    message: 'Message',
-    date: 'Date',
-    location: 'Location',
-    locationNotAvailable: 'Location not available',
-    ageRange: 'Age Range',
-    gender: 'Gender',
+    title: "All Feedbacks",
+    downloadCSV: "Download CSV",
+    language: "Language",
+    noFeedback: "No feedback available",
+    rating: "Rating",
+    message: "Message",
+    date: "Date",
+    location: "Location",
+    locationNotAvailable: "Location not available",
+    ageRange: "Age Range",
+    gender: "Gender",
     genderLabels: {
-      male: 'Male',
-      female: 'Female',
+      male: "Male",
+      female: "Female",
     },
   },
   ar: {
-    title: 'جميع التعليقات',
-    downloadCSV: 'تحميل CSV',
-    language: 'اللغة',
-    noFeedback: 'لا توجد تعليقات',
-    rating: 'التقييم',
-    message: 'الرسالة',
-    date: 'التاريخ',
-    location: 'الموقع',
-    locationNotAvailable: 'الموقع غير متاح',
-    ageRange: 'الفئة العمرية',
-    gender: 'الجنس',
+    title: "جميع التعليقات",
+    downloadCSV: "تحميل CSV",
+    language: "اللغة",
+    noFeedback: "لا توجد تعليقات",
+    rating: "التقييم",
+    message: "الرسالة",
+    date: "التاريخ",
+    location: "الموقع",
+    locationNotAvailable: "الموقع غير متاح",
+    ageRange: "الفئة العمرية",
+    gender: "الجنس",
     genderLabels: {
-      male: 'ذكر',
-      female: 'أنثى',
+      male: "ذكر",
+      female: "أنثى",
     },
   },
 };
@@ -86,7 +86,7 @@ export default function FeedbackPage() {
   const { language } = useLanguage();
   const limit = 10;
   const t = translations[language as keyof typeof translations];
-  const dir = language === 'ar' ? 'rtl' : 'ltr';
+  const dir = language === "ar" ? "rtl" : "ltr";
 
   const fetchFeedbacks = async (page: number) => {
     try {
@@ -95,13 +95,13 @@ export default function FeedbackPage() {
         `/api/feedback?lang=${language}&page=${page}&limit=${limit}`
       );
       const data = await res.json();
-      console.log('Received feedback data:', data);
+      console.log("Received feedback data:", data);
       if (data.success) {
         setFeedbacks(data);
-        console.log('Set feedbacks state:', data);
+        console.log("Set feedbacks state:", data);
       }
     } catch (error) {
-      console.error('Failed to fetch feedbacks:', error);
+      console.error("Failed to fetch feedbacks:", error);
     } finally {
       setIsLoading(false);
     }
@@ -114,13 +114,13 @@ export default function FeedbackPage() {
   const downloadCSV = () => {
     if (feedbacks?.data) {
       const fields = [
-        'rating',
-        'message',
-        'language',
-        'ageRange',
-        'gender',
-        'location',
-        'createdAt',
+        "rating",
+        "message",
+        "language",
+        "ageRange",
+        "gender",
+        "location",
+        "createdAt",
       ];
       const json2csvParser = new Parser({ fields });
       const csv = json2csvParser.parse(
@@ -130,19 +130,19 @@ export default function FeedbackPage() {
             t.genderLabels[feedback.gender as keyof typeof t.genderLabels],
           location: feedback.location
             ? `${feedback.location.city}, ${feedback.location.country}`
-            : 'N/A',
+            : "N/A",
           createdAt: moment(feedback.createdAt).format(
-            'MMMM Do YYYY, h:mm:ss a'
+            "MMMM Do YYYY, h:mm:ss a"
           ),
         }))
       );
 
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'feedbacks.csv');
-      link.style.visibility = 'hidden';
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "feedbacks.csv");
+      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -150,23 +150,23 @@ export default function FeedbackPage() {
   };
 
   const getRatingColor = (rating: number) => {
-    if (rating <= 6) return 'text-orange-600';
-    if (rating <= 8) return 'text-yellow-600';
-    return 'text-green-600';
+    if (rating <= 6) return "text-orange-600";
+    if (rating <= 8) return "text-yellow-600";
+    return "text-green-600";
   };
 
   return (
     <div className="container mx-auto px-4 py-8" dir={dir}>
       <div
         className={`flex items-center justify-between mb-8 ${
-          dir === 'rtl' ? 'flex-row-reverse' : ''
+          dir === "rtl" ? "flex-row-reverse" : ""
         }`}
       >
         <h1 className="text-3xl font-bold">{t.title}</h1>
         <button
           onClick={downloadCSV}
-          className={`inline-flex items-center gap-2 bg-[#c8ad0d] text-white px-4 py-2 rounded-lg hover:bg-[#c8ad0d]/90 transition-colors ${
-            dir === 'rtl' ? 'flex-row-reverse' : ''
+          className={`inline-flex items-center gap-2 btn-bg text-white px-4 py-2 rounded-lg  transition-colors ${
+            dir === "rtl" ? "flex-row-reverse" : ""
           }`}
         >
           <Download className="h-4 w-4" />
@@ -176,7 +176,7 @@ export default function FeedbackPage() {
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-[#c8ad0d]" />
+          <Loader2 className="h-8 w-8 animate-spin text-color-1" />
         </div>
       ) : (
         <>
@@ -193,7 +193,7 @@ export default function FeedbackPage() {
               >
                 <div
                   className={`flex items-center justify-between mb-4 ${
-                    dir === 'rtl' ? 'flex-row-reverse' : ''
+                    dir === "rtl" ? "flex-row-reverse" : ""
                   }`}
                 >
                   <div
@@ -206,13 +206,13 @@ export default function FeedbackPage() {
                   <div className="text-sm text-gray-500">
                     {moment(feedback.createdAt)
                       .locale(language)
-                      .format('MMMM Do YYYY, h:mm a')}
+                      .format("MMMM Do YYYY, h:mm a")}
                   </div>
                 </div>
                 {feedback.message && (
                   <p
                     className={`text-gray-700 ${
-                      dir === 'rtl' ? 'text-right' : 'text-left'
+                      dir === "rtl" ? "text-right" : "text-left"
                     }`}
                   >
                     {feedback.message}
@@ -220,24 +220,24 @@ export default function FeedbackPage() {
                 )}
                 <div
                   className={`mt-4 grid grid-cols-2 md:flex md:flex-wrap gap-4 text-sm text-gray-500 ${
-                    dir === 'rtl' ? 'text-right' : 'text-left'
+                    dir === "rtl" ? "text-right" : "text-left"
                   }`}
                 >
                   <div className="flex items-center gap-1">
-                    {t.language}:{' '}
+                    {t.language}:{" "}
                     <span className="font-medium">
-                      {feedback.language === 'ar' ? 'العربية' : 'English'}
+                      {feedback.language === "ar" ? "العربية" : "English"}
                     </span>
                   </div>
                   {feedback.ageRange && (
                     <div className="flex items-center gap-1">
-                      {t.ageRange}:{' '}
+                      {t.ageRange}:{" "}
                       <span className="font-medium">{feedback.ageRange}</span>
                     </div>
                   )}
                   {feedback.gender && (
                     <div className="flex items-center gap-1">
-                      {t.gender}:{' '}
+                      {t.gender}:{" "}
                       <span className="font-medium">
                         {
                           t.genderLabels[
@@ -281,11 +281,11 @@ export default function FeedbackPage() {
                 disabled={currentPage === 1}
                 className={`px-3 py-2 rounded-lg ${
                   currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-[#c8ad0d]/10 text-[#c8ad0d] hover:bg-[#c8ad0d]/20'
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-[#c8ad0d]/10 border-color-1 hover:bg-[#c8ad0d]/20"
                 }`}
               >
-                {language === 'ar' ? 'التالي' : 'Previous'}
+                {language === "ar" ? "التالي" : "Previous"}
               </button>
 
               <div className="flex items-center gap-1">
@@ -306,8 +306,8 @@ export default function FeedbackPage() {
                           }}
                           className={`min-w-[40px] px-3 py-2 rounded-lg ${
                             currentPage === index + 1
-                              ? 'bg-[#c8ad0d] text-white'
-                              : 'bg-[#c8ad0d]/10 text-[#c8ad0d] hover:bg-[#c8ad0d]/20'
+                              ? "btn-bg text-white"
+                              : "bg-[#c8ad0d]/10 text-color-1 hover:bg-[#c8ad0d]/20"
                           }`}
                         >
                           {index + 1}
@@ -339,11 +339,11 @@ export default function FeedbackPage() {
                 disabled={currentPage === feedbacks.paginate.totalPage}
                 className={`px-3 py-2 rounded-lg ${
                   currentPage === feedbacks.paginate.totalPage
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-[#c8ad0d]/10 text-[#c8ad0d] hover:bg-[#c8ad0d]/20'
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-[#c8ad0d]/10 text-color-1 hover:bg-[#c8ad0d]/20"
                 }`}
               >
-                {language === 'ar' ? 'السابق' : 'Next'}
+                {language === "ar" ? "السابق" : "Next"}
               </button>
             </div>
           )}

@@ -1,3 +1,5 @@
+
+
 'use client';
 
 import MainLayout from '@/components/layouts/main-layout';
@@ -18,7 +20,7 @@ export default function Home() {
 
   return (
     <MainLayout>
-      <Hero />
+      <Hero theme={null} />
       <LocationLanguage />
       <ActionButtons onQuestionSelect={handleQuestionSelect} isManualChat={isManualChat} setIsManualChat={setIsManualChat} />
       <Chat setIsManualChat={setIsManualChat} />

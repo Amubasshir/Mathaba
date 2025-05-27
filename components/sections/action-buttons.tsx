@@ -263,7 +263,7 @@ export default function ActionButtons({
       <div>
         <Button
           variant="primary"
-          className="bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-6 w-full rounded-full"
+          className="btn-bg text-white py-6 w-full rounded-full"
           onClick={handleGuidesClick}
         >
           {buttonText.guides[language]}

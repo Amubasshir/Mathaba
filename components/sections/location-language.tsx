@@ -22,7 +22,7 @@ export default function LocationLanguage() {
           <Button
             onClick={() => router.push('/locations')}
             variant="custom"
-            className="flex-1 max-w-[160px] gap-1.5 bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-[1px]"
+            className="flex-1 max-w-[160px] gap-1.5 btn-bg text-white py-[1px]"
           >
             <div className={`flex items-center justify-center gap-2 ${dir}`}>
               <MapPin className="h-4 w-4 flex-shrink-0" />
@@ -33,7 +33,7 @@ export default function LocationLanguage() {
           <Button
             onClick={() => setIsFeedbackOpen(true)}
             variant="custom"
-            className="flex-1 max-w-[160px] gap-1.5 bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white py-[1px]"
+            className="flex-1 max-w-[160px] gap-1.5 btn-bg text-white py-[1px]"
           >
             <div className={`flex items-center justify-center gap-2 ${dir}`}>
               <MessageSquare className="h-4 w-4 flex-shrink-0" />

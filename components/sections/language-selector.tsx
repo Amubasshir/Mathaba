@@ -69,7 +69,7 @@ export default function LanguageSelector() {
         <div className="flex items-center gap-1 cursor-pointer">
           <Button
             variant="custom"
-            className="flex-1 max-w-[160px] gap-1.5 bg-[#c8ad0d] hover:bg-[#c8ad0d]/90 text-white"
+            className="flex-1 max-w-[160px] gap-1.5 btn-bg text-white"
           >
             <div className="flex items-center justify-center gap-2 rtl">
               <Globe className="h-4 w-4 flex-shrink-0" />

@@ -1,7 +1,13 @@
 import { useLanguage } from '@/contexts/language-context';
+import { ThemeConfig } from '@/lib/themes';
 import Image from 'next/image';
 
-export default function Hero() {
+interface PageProps {
+  theme: ThemeConfig | null;
+}
+
+
+export default function Hero({ theme }: PageProps) {
   const { language } = useLanguage();
 
   //   const heroText = {
@@ -30,7 +36,7 @@ export default function Hero() {
     <div className="text-center mb-3 w-full">
       <div className="relative w-32 h-32 mx-auto mb-0">
         <Image
-          src="/mathabh.png"
+          src={theme ? theme?.images?.logo : "/mathabh.png"}
           alt="Flow Logo"
           fill
           priority
