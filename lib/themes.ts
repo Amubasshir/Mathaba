@@ -10,6 +10,7 @@ export interface ThemeConfig {
     accent: string;
   };
   variants?: string[];
+  website?: string;
   colorContainer?: string;
   images: {
     hero: string;
@@ -24,6 +25,8 @@ export interface ThemeConfig {
     cta: string;
   };
 }
+
+
 
 export const themes: Record<string, ThemeConfig> = {
   rifad: {
@@ -43,6 +46,7 @@ export const themes: Record<string, ThemeConfig> = {
       logo: "/rifad.png",
     },
     features: ["analytics", "charts", "reports"],
+    website: "https://rifad.com.sa",
     content: {
       title: "Mathaba Rifad",
       subtitle: "Dive Deep into Data",
@@ -50,50 +54,82 @@ export const themes: Record<string, ThemeConfig> = {
       cta: "Start Analytics",
     },
   },
-  red: {
-    id: "red",
-    name: "Fire Theme",
+
+  alrifadah: {
+    id: "alrifadah",
+    name: "Mathaba AlRifadah",
     colors: {
-      primary: "#CC0000",
-      secondary: "#990000",
-      background: "#FFF5F5",
+      primary: "#0066CC",
+      secondary: "#004499",
+      background: "#F0F8FF",
       text: "#1A1A1A",
-      accent: "#FF3333",
+      accent: "#00AAFF",
     },
+    colorContainer: "container-purple",
     images: {
-      hero: "/images/red/hero.jpg",
-      gallery: ["/images/red/1.jpg", "/images/red/2.jpg"],
-      logo: "/images/red/logo.svg",
+      hero: "/images/blue/hero.jpg",
+      gallery: ["/images/blue/1.jpg", "/images/blue/2.jpg"],
+      logo: "/rifad.png",
     },
-    features: ["gaming", "tournaments", "leaderboards"],
+    features: ["analytics", "charts", "reports"],
+    website: "https://alrifadah.com.sa",
     content: {
-      title: "Fire Gaming Hub",
-      subtitle: "Ignite Your Passion",
-      description: "Ultimate gaming platform for competitive players",
-      cta: "Join Tournament",
+      title: "Mathaba AlRifadah",
+      subtitle: "Dive Deep into Data",
+      description: "Professional analytics solution for maritime businesses",
+      cta: "Start Analytics",
     },
   },
-  green: {
-    id: "green",
-    name: "Nature Theme",
+
+  thaker: {
+    id: "thaker",
+    name: "Mathaba Thaker",
     colors: {
-      primary: "#00AA00",
-      secondary: "#008800",
-      background: "#F0FFF0",
+      primary: "#0066CC",
+      secondary: "#004499",
+      background: "#F0F8FF",
       text: "#1A1A1A",
-      accent: "#33CC33",
+      accent: "#00AAFF",
     },
+    colorContainer: "container-purple",
     images: {
-      hero: "/images/green/hero.jpg",
-      gallery: ["/images/green/1.jpg", "/images/green/2.jpg"],
-      logo: "/images/green/logo.svg",
+      hero: "/images/blue/hero.jpg",
+      gallery: ["/images/blue/1.jpg", "/images/blue/2.jpg"],
+      logo: "/rifad.png",
     },
-    features: ["sustainability", "tracking", "community"],
+    features: ["analytics", "charts", "reports"],
+    website: "https://karamthakher.sa",
     content: {
-      title: "EcoTracker Platform",
-      subtitle: "Grow Sustainably",
-      description: "Environmental tracking for conscious businesses",
-      cta: "Go Green",
+      title: "Mathaba Thaker",
+      subtitle: "Dive Deep into Data",
+      description: "Professional analytics solution for maritime businesses",
+      cta: "Start Analytics",
+    },
+  },
+
+  arbhaj: {
+    id: "arbhaj",
+    name: "Mathaba Arbhaj",
+    colors: {
+      primary: "#0066CC",
+      secondary: "#004499",
+      background: "#F0F8FF",
+      text: "#1A1A1A",
+      accent: "#00AAFF",
+    },
+    colorContainer: "container-purple",
+    images: {
+      hero: "/images/blue/hero.jpg",
+      gallery: ["/images/blue/1.jpg", "/images/blue/2.jpg"],
+      logo: "/rifad.png",
+    },
+    features: ["analytics", "charts", "reports"],
+    website: "https://www.arbhaj.com/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%83%D8%B1%D8%A7%D9%85-%D8%A7%D9%84%D8%B6%D9%8A%D9%81-%D9%84%D9%84%D8%B3%D9%8A%D8%A7%D8%AD%D8%A9",
+    content: {
+      title: "Mathaba Arbhaj",
+      subtitle: "Dive Deep into Data",
+      description: "Professional analytics solution for maritime businesses",
+      cta: "Start Analytics",
     },
   },
 };
