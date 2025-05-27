@@ -178,15 +178,53 @@
 }
 
 
+.container-purple-sweet .text-color-1 {
+  color: #9c6fb2;
+}
+.container-purple-sweet .border-color-1 {
+  border-color: #9c6fb2 !important;
+}
+.container-purple-sweet .btn-bg {
+  background-color: #9c6fb2 !important;
+}
+.container-purple-sweet .btn-bg:hover {
+  background-color: rgb(156 111 178 / 0.9);
+  opacity: 0.9;
+}
+.container-purple-sweet .text-color-1 {
+  color: #9c6fb2;
+}
+
+.container-green .text-color-1 {
+  color: #063427;
+}
+.container-green .border-color-1 {
+  border-color: #063427 !important;
+}
+.container-green .btn-bg {
+  background-color: #063427 !important;
+}
+.container-green .btn-bg:hover {
+  background-color: rgb(6 52 39 / 0.9);
+  opacity: 0.9;
+}
+.container-green .text-color-1 {
+  color: #063427;
+}
+
+
 .container-red .border-color-1 {
   border-color: #ad0610 !important;
 }
 .container-red .btn-bg {
-  /* bg-[#ad0610] hover:bg-[#ad0610]/90 */
-  background-color: #ad0610 !important;
-  /* background-color: red; */
+    /* bg-[#ad0610] hover:bg-[#ad0610]/90 */
+    background-color: #ad0610 !important;
+    /* background-color: red; */
 }
 .container-red .btn-bg:hover {
-  background-color: rgb(173 6 16 / 0.9);
-  opacity: 0.9;
+    background-color: rgb(173 6 16 / 0.9);
+    opacity: 0.9;
+}
+.container-red .text-color-1 {
+    color: #ad0610 !important;
 }

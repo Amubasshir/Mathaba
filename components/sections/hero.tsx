@@ -1,6 +1,7 @@
 import { useLanguage } from '@/contexts/language-context';
 import { ThemeConfig } from '@/lib/themes';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface PageProps {
   theme: ThemeConfig | null;
@@ -34,6 +35,7 @@ export default function Hero({ theme }: PageProps) {
   };
   return (
     <div className="text-center mb-3 w-full">
+        <Link href={theme?.website || '/'} target='_blank'>
       <div className="relative w-32 h-32 mx-auto mb-0">
         <Image
           src={theme ? theme?.images?.logo : "/mathabh.png"}
@@ -41,8 +43,9 @@ export default function Hero({ theme }: PageProps) {
           fill
           priority
           className="object-contain"
-        />
+          />
       </div>
+          </Link>
       <p
         className={`text-[#646263] text-center text-lg font-medium max-w-sm mx-auto mb-4 ${
           ['ar', 'ur', 'fa'].includes(language) ? 'rtl' : 'ltr'

@@ -43,13 +43,13 @@ export default function Chat({
   const [fullText, setFullText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [currentTypingIndex, setCurrentTypingIndex] = useState(-1);
-
   const [textareaHeight, setTextareaHeight] = useState("24px");
   const [suggestions, setSuggestions] = useState([]);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
+  const [isStarted, setIsStarted] = useState(false);
 
-  console.log(language, suggestions);
+  console.log( isStarted);
   useEffect(() => {
     if (!inputValue.trim()) {
       setSuggestions([]);
@@ -265,6 +265,7 @@ export default function Chat({
         }
       }
 
+      setIsStarted(true);
       // Add retry logic for network issues
       let retries = 2;
       let response;
@@ -361,10 +362,11 @@ export default function Chat({
           return finalData.message;
         }
       }
-
-      return data.message;
-    } catch (err) {
-      console.error("Error in sendMessage:", err);
+    setIsStarted(false);
+    return data.message;
+} catch (err) {
+    setIsStarted(false);
+    console.error("Error in sendMessage:", err);
       setError(err instanceof Error ? err.message : "Failed to send message");
       return null;
     }
@@ -628,7 +630,7 @@ export default function Chat({
                       Ref: {message?.ref}
                     </span>
                   )} */}
-                  {message.role === "assistant" && language !== "ar" && (
+                  {!isStarted && message.role === "assistant" && language !== "ar" && (
                     <span className=" text-gray-700 text-xs pr-2 py-0.5 rounded-full inline-flex items-center gap-1 italic">
                       <Sparkles className="h-4 w-4 text-theme-gold" />{" "}
                       Al translation from official Arabic source.
