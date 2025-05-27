@@ -36,7 +36,7 @@ export const themes: Record<string, ThemeConfig> = {
       text: "#1A1A1A",
       accent: "#00AAFF",
     },
-    colorContainer: "container-red",
+    colorContainer: "container-purple",
     images: {
       hero: "/images/blue/hero.jpg",
       gallery: ["/images/blue/1.jpg", "/images/blue/2.jpg"],

@@ -160,9 +160,24 @@
 }
 
 
-.container-red .text-color-1 {
-  color: #ad0610;
+.container-purple .text-color-1 {
+  color: #5f10be;
 }
+.container-purple .border-color-1 {
+  border-color: #5f10be !important;
+}
+.container-purple .btn-bg {
+  background-color: #5f10be !important;
+}
+.container-purple .btn-bg:hover {
+  background-color: rgb(95 16 190 / 0.9);
+  opacity: 0.9;
+}
+.container-purple .text-color-1 {
+  color: #5f10be;
+}
+
+
 .container-red .border-color-1 {
   border-color: #ad0610 !important;
 }
