@@ -1041,64 +1041,6 @@ export default function LocationFullComponent() {
         </LoadScript>
       </div>
 
-      {/* Horizontal Scrollable Location Cards */}
-      {/* <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg px-6">
-        <div className="relative">
-          {showLeftScroll && (
-            <button
-              onClick={() => scroll('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
-              style={{ transform: 'translate(-50%, -50%)' }}
-            >
-              <ChevronLeft className="h-6 w-6 text-gray-600" />
-            </button>
-          )}
-
-          {showRightScroll && (
-            <button
-              onClick={() => scroll('right')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
-              style={{ transform: 'translate(50%, -50%)' }}
-            >
-              <ChevronRight className="h-6 w-6 text-gray-600" />
-            </button>
-          )}
-
-          <div
-            ref={scrollContainerRef}
-            className="flex overflow-x-auto gap-4 p-4 no-scrollbar scroll-smooth"
-            onScroll={handleScroll}
-          >
-            {filteredLocations.map((location) => (
-              <div
-                key={location.id}
-                className={`flex-none w-full md:w-[280px] p-4 rounded-lg shadow-md cursor-pointer transition-all duration-200
-                  ${
-                    selectedLocation?.id === location.id
-                      ? 'bg-[#F3F0FF] border border-[#6b6291]'
-                      : 'bg-white hover:shadow-lg'
-                  }`}
-                onClick={() => {
-                  setSelectedLocation(location);
-                  setActiveMarker(location);
-                }}
-              >
-                <h3 className="font-semibold text-base mb-1">
-                  {isArabic ? location.nameAr : location.name}
-                </h3>
-                <p className="text-gray-500 text-sm mb-2">
-                  {isArabic ? location.cityAr : location.address}
-                </p>
-                {location.note && (
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">
-                    {isArabic ? location.note.ar : location.note.en}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div> */}
 
 
 
@@ -1132,7 +1074,7 @@ export default function LocationFullComponent() {
                 nextEl: '.swiper-button-next-2',
                 }}
                 loop={true}
-                className='mySwiper [&>div]:py-3 [&>div]:px-3'
+                className='mySwiper [&>div]:py-3 [&>div]:px-3 !pr-[20px] md:!pr-[16px]'
                 freeMode={true}
                 dir='ltr'
             >
