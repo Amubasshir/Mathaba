@@ -405,14 +405,14 @@ const locations: Location[] = [
   {
     id: '27',
     name: 'Mosque',
-    nameAr: 'عائشة',
+    nameAr: 'جامع عائشة الراجحي',
     city: 'Makkah',
     cityAr: 'مكة المكرمة',
     address: '',
     position: { lat: 21.4225, lng: 39.8262 },
     mapUrl: 'https://maps.app.goo.gl/EUgu4idhaPV7DfQ28',
     category: 'Mosque',
-    desAr: 'جامع عاشئة الراجحي',
+    desAr: 'جامع عائشة الراجحي',
     desEn: '',
   },
   {
