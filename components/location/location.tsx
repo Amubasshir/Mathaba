@@ -1189,7 +1189,8 @@ export default function LocationFullComponent() {
                   <p className="text-sm">
                     {isArabic ? activeMarker.cityAr : activeMarker.city}
                   </p>
-                  <p className="text-sm">{activeMarker?.address}</p>
+                  <p className="text-sm mb-1">{activeMarker?.address}</p>
+                  <p className="text-sm ">{(isArabic ? activeMarker.desAr : activeMarker.desEn)}</p>
                   {/* {activeMarker.note && (
                     <p className="text-sm mt-1 text-gray-600">
                       {isArabic ? activeMarker.note.ar : activeMarker.note.en}
