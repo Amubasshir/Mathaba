@@ -405,7 +405,7 @@ const locations: Location[] = [
   {
     id: '27',
     name: 'Mosque',
-    nameAr: 'جامع عاشئة الراجحي',
+    nameAr: 'عائشة',
     city: 'Makkah',
     cityAr: 'مكة المكرمة',
     address: '',
