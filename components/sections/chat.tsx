@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
-import { Send, Sparkles, SquareArrowOutUpRight, Star } from "lucide-react";
+import { Globe, GlobeLock, Send, Sparkles, SquareArrowOutUpRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -48,8 +48,9 @@ export default function Chat({
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [isStarted, setIsStarted] = useState(false);
+  const [isWebSearch, setIsWebSearch] = useState(false);
 
-  console.log( isStarted);
+  console.log( {isWebSearch});
   useEffect(() => {
     if (!inputValue.trim()) {
       setSuggestions([]);
@@ -255,6 +256,15 @@ export default function Chat({
   };
 
   const sendMessage = async (content: string) => {
+    // const selectedAssistantId = process.env.
+    let searchAssistantId="";
+    if(isWebSearch) {
+        searchAssistantId = process.env.NEXT_PUBLIC_WEB_SEARCH_ASSISTANT_ID as string;
+    }else{
+        searchAssistantId = process.env.NEXT_PUBLIC_NORMAL_SEARCH_ASSISTANT_ID as string;
+    }
+    if(!searchAssistantId) return;
+
     try {
       let newThreadId = threadId;
       if (!newThreadId) {
@@ -281,7 +291,7 @@ export default function Chat({
             body: JSON.stringify({
               threadId: newThreadId,
               content,
-              assistantId: "asst_6JH9SIKjfPQrfApGdC0am63k",
+              assistantId: searchAssistantId,
               language,
               location: userLocation,
               userId: userId,
@@ -346,8 +356,9 @@ export default function Chat({
             body: JSON.stringify({
               threadId: newThreadId,
               content: JSON.stringify(searchResults),
-              assistantId: "asst_6JH9SIKjfPQrfApGdC0am63k",
+              assistantId: searchAssistantId,
               toolCallId: toolCall.id,
+              searchMode: isWebSearch ? 'search_web' : 'search_normal',
             }),
           });
 
@@ -684,6 +695,18 @@ export default function Chat({
                   dir === "rtl" ? "flex-row-reverse" : "flex-row"
                 } items-center gap-2 text-gray-600`}
               >
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className={`h-8 w-8 ${isWebSearch ? "text-blue-600" : 'text-[#6b6291]'} hover:text-[#6b6291]`}
+                  onClick={()=> setIsWebSearch(!isWebSearch)}
+                //   disabled={isLoading || !inputValue.trim()}
+                >
+                  {/* <Send className="h-5 w-5" /> */}
+                  {!isWebSearch ? <GlobeLock className="h-6 w-6" /> :
+                  <Globe className="h-6 w-6" />}
+                  {/* <span className="sr-only">Send</span> */}
+                </Button>
                 <textarea
                   value={inputValue}
                   onChange={handleTextareaInput}
