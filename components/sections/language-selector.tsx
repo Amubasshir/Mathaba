@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useLanguage } from '@/contexts/language-context';
-import { Globe, X } from 'lucide-react';
+import { Globe, Languages, X } from 'lucide-react';
 import { useState } from 'react';
 
 type Language =
@@ -72,7 +72,8 @@ export default function LanguageSelector() {
             className="flex-1 max-w-[160px] gap-1.5 btn-bg text-white"
           >
             <div className="flex items-center justify-center gap-2 rtl">
-              <Globe className="h-4 w-4 flex-shrink-0" />
+              {/* <Globe className="h-4 w-4 flex-shrink-0" /> */}
+              <Languages className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm">
                 {languages.find((lang) => lang.code === language)?.name ||
                   'عربي'}
