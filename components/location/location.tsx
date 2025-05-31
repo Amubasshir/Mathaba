@@ -396,7 +396,7 @@ const locations: Location[] = [
     cityAr: 'مكة المكرمة',
     address: '',
     position: { lat: 21.4225, lng: 39.8262 },
-    mapUrl: 'https://maps.app.goo.gl/B7NfDZ4pnGYH4ir57',
+    mapUrl: 'https://maps.app.goo.gl/BTEt5jtBE5UbjYUw6',
     category: 'Other',
     desAr: 'جامعة ام القرى',
     desEn:
@@ -405,14 +405,14 @@ const locations: Location[] = [
   {
     id: '27',
     name: 'Mosque',
-    nameAr: 'جامع عاشئة الراجحي',
+    nameAr: 'جامع عائشة الراجحي',
     city: 'Makkah',
     cityAr: 'مكة المكرمة',
     address: '',
     position: { lat: 21.4225, lng: 39.8262 },
     mapUrl: 'https://maps.app.goo.gl/EUgu4idhaPV7DfQ28',
     category: 'Mosque',
-    desAr: 'جامع عاشئة الراجحي',
+    desAr: 'جامع عائشة الراجحي',
     desEn: '',
   },
   {
@@ -490,7 +490,7 @@ const locations: Location[] = [
     cityAr: 'مكة المكرمة',
     address: '',
     position: { lat: 21.4225, lng: 39.8262 },
-    mapUrl: 'https://maps.app.goo.gl/z2T3aSJL1VVUADAw9',
+    mapUrl: 'https://maps.app.goo.gl/HaUhpFrEjuS1NdGv6',
     category: 'Shopping Mall',
     desAr: '',
     desEn: '',
@@ -1190,7 +1190,9 @@ export default function LocationFullComponent() {
                     {isArabic ? activeMarker.cityAr : activeMarker.city}
                   </p>
                   <p className="text-sm mb-1">{activeMarker?.address}</p>
-                  <p className="text-sm ">{(isArabic ? activeMarker.desAr : activeMarker.desEn)}</p>
+                  <p className="text-sm ">
+                    {isArabic ? activeMarker.desAr : activeMarker.desEn}
+                  </p>
                   {/* {activeMarker.note && (
                     <p className="text-sm mt-1 text-gray-600">
                       {isArabic ? activeMarker.note.ar : activeMarker.note.en}
