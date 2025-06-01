@@ -17,7 +17,7 @@ export default function Footer() {
         <div className="flex justify-center gap-4 text-sm text-[#646263] mb-2">
           <FooterLink href="#">About Us</FooterLink>
           <FooterLink href="#">Privacy Policy</FooterLink>
-          <FooterLink href="#">Terms of Use</FooterLink>
+          <FooterLink href="terms-and-conditions">Terms of Use</FooterLink>
         </div>
         <p className="text-center text-xs text-[#646263]">
           All Rights Reserved. 2025
