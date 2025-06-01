@@ -313,7 +313,6 @@ export default function Chat({
 
         retries--;
         if (retries >= 0) {
-          // Wait before retrying (exponential backoff)
           await new Promise((resolve) =>
             setTimeout(resolve, (2 - retries) * 1000)
           );
