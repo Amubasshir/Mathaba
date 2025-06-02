@@ -4,17 +4,20 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/language-context';
 import { useEffect, useState } from 'react';
 import FAQQuestions from './faq-questions';
+import { ThemeConfig } from '@/lib/themes';
 
 interface ActionButtonsProps {
   onQuestionSelect: (question: string) => void;
   isManualChat: boolean;
   setIsManualChat: (isManualChat: boolean) => void;
+  theme: ThemeConfig | null;
 }
 
 export default function ActionButtons({
   onQuestionSelect,
   isManualChat,
   setIsManualChat,
+  theme,
 }: ActionButtonsProps) {
   const [showFAQ, setShowFAQ] = useState(false);
   const [showRedirectButtons, setShowRedirectButtons] = useState(false);

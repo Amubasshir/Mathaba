@@ -13,7 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -22,6 +22,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { getParentPath } from '@/utils/utils';
 
 interface Location {
   id: string;
@@ -1033,8 +1034,12 @@ export default function LocationFullComponent() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
   const { language } = useLanguage();
   const isArabic = language === 'ar';
+  
+
+  const backUrl = getParentPath(pathname);
 
   // Filter locations based on selected city
   const filteredLocations = locations.filter(
@@ -1108,7 +1113,7 @@ export default function LocationFullComponent() {
       {/* Header with Back Button and City Selector */}
       <div className="sticky top-0 z-50 p-4 bg-white shadow-sm flex items-center">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push(backUrl)}
           className="flex items-center text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />

@@ -7,8 +7,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import FeedbackModal from './feedback-modal';
 import LanguageSelector from './language-selector';
+import { ThemeConfig } from '@/lib/themes';
 
-export default function LocationLanguage() {
+interface PageProps {
+  theme: ThemeConfig | null;
+}
+
+export default function LocationLanguage({theme}: PageProps) {
   const { t, dir } = useLanguage();
   const router = useRouter();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -20,7 +25,7 @@ export default function LocationLanguage() {
 
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => router.push('/locations')}
+            onClick={() => router.push(theme?.location as string)}
             variant="custom"
             className="flex-1 max-w-[160px] gap-1.5 btn-bg text-white py-[1px]"
           >

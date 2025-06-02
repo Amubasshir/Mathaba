@@ -11,6 +11,7 @@ export interface ThemeConfig {
   };
   variants?: string[];
   website?: string;
+  location?: string;
   colorContainer?: string;
   images: {
     hero: string;
@@ -47,6 +48,7 @@ export const themes: Record<string, ThemeConfig> = {
     },
     features: ["analytics", "charts", "reports"],
     website: "https://rifad.com.sa",
+    location: "/rifad/locations",
     content: {
       title: "Mathaba Rifad",
       subtitle: "Dive Deep into Data",
@@ -73,6 +75,7 @@ export const themes: Record<string, ThemeConfig> = {
     },
     features: ["analytics", "charts", "reports"],
     website: "https://alrifadah.com.sa",
+    location: "/alrifadah/locations",
     content: {
       title: "Mathaba AlRifadah",
       subtitle: "Dive Deep into Data",
@@ -99,6 +102,7 @@ export const themes: Record<string, ThemeConfig> = {
     },
     features: ["analytics", "charts", "reports"],
     website: "https://karamthakher.sa",
+    location: "/thaker/locations",
     content: {
       title: "Mathaba Thaker",
       subtitle: "Dive Deep into Data",
@@ -125,6 +129,7 @@ export const themes: Record<string, ThemeConfig> = {
     },
     features: ["analytics", "charts", "reports"],
     website: "https://www.arbhaj.com/%D8%B4%D8%B1%D9%83%D8%A9-%D8%A7%D9%83%D8%B1%D8%A7%D9%85-%D8%A7%D9%84%D8%B6%D9%8A%D9%81-%D9%84%D9%84%D8%B3%D9%8A%D8%A7%D8%AD%D8%A9",
+    location: "/arbhaj/locations",
     content: {
       title: "Mathaba Arbhaj",
       subtitle: "Dive Deep into Data",

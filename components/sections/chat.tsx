@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
+import { ThemeConfig } from "@/lib/themes";
 import { Globe, GlobeLock, Send, Sparkles, SquareArrowOutUpRight, Star } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -15,10 +16,12 @@ interface Message {
 interface Thread {
   id: string;
   messages: Message[];
+  theme: ThemeConfig;
 }
 
 export default function Chat({
   setIsManualChat,
+  theme,
 }: {
   setIsManualChat: (isManualChat: boolean) => void;
 }) {
