@@ -29,7 +29,7 @@ export default function AnalyticsPage() {
         const data = await response.json();
 
         if (data.success) {
-            // setCountedUsers(data.count);
+            setAnalyticsData(data.limitedData)
             setStats({
                 ...stats,
                 uniqueUsers: data.count,

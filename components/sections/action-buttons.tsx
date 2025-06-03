@@ -41,9 +41,11 @@ export default function ActionButtons({
       my: 'အမေးများသောမေးခွန်းများ',
       hi: 'अक्सर पूछे जाने वाले प्रश्न',
       uz: 'TSS',
+      bn: 'FAQ',
     },
     guides: {
       en: 'Educational Guides',
+       en:"শিক্ষামূলক নির্দেশিকা",
       ar: 'الأدلة التوعوية',
       fr: 'Guides éducatifs',
       fa: 'راهنماهای آموزشی',
@@ -59,6 +61,7 @@ export default function ActionButtons({
       my: 'ပညာရေးလမ်းညွှန်များ',
       hi: 'शैक्षिक मार्गदर्शिकाएँ',
       uz: "Ta'limiy qo'llanmalar",
+      
     },
   };
 

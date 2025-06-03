@@ -103,8 +103,6 @@ import { NextResponse } from "next/server";
 //   }
 // }
 
-
-
 export async function POST(request: Request) {
   try {
     await dbConnect();
@@ -120,22 +118,22 @@ export async function POST(request: Request) {
     // Use findOneAndUpdate with upsert to handle race conditions atomically
     const result = await TargetedUser.findOneAndUpdate(
       { uuid, target }, // Find document with both uuid and target
-      { 
-        uuid, 
+      {
+        uuid,
         target,
-        $setOnInsert: { createdAt: new Date() } // Only set createdAt if inserting
+        $setOnInsert: { createdAt: new Date() }, // Only set createdAt if inserting
       },
-      { 
+      {
         upsert: true, // Create if doesn't exist
-        new: true,    // Return the updated/created document
-        setDefaultsOnInsert: true // Apply schema defaults on insert
+        new: true, // Return the updated/created document
+        setDefaultsOnInsert: true, // Apply schema defaults on insert
       }
     );
 
     console.log("upsert result", result, uuid, target);
 
     // Check if this was a new creation or existing document
-    const isNewDocument = result.createdAt.getTime() > (Date.now() - 1000); // Created within last second
+    const isNewDocument = result.createdAt.getTime() > Date.now() - 1000; // Created within last second
 
     return NextResponse.json({
       success: true,
@@ -159,7 +157,6 @@ export async function POST(request: Request) {
   }
 }
 
-
 // GET endpoint to get count of users for a specific target
 export async function GET(request: Request) {
   try {
@@ -175,13 +172,29 @@ export async function GET(request: Request) {
     }
 
     const count = await TargetedUser.countDocuments({ target });
-    
-    const interactionCount = await Interaction.countDocuments({ target });
+    const result = await Interaction.aggregate([
+      { $match: { target } },
+      {
+        $facet: {
+          totalCount: [{ $count: "count" }],
+          data: [{ $sort: { timestamp: -1 } }, { $limit: 1000 }],
+        },
+      },
+    ]);
+
+    const totalCount = result[0].totalCount[0]?.count || 0;
+    const limitedData = result[0].data;
+
+    // const interactionCount = await Interaction.countDocuments({ target });
+    const interactions = await Interaction.find()
+      .sort({ timestamp: -1 }) // Sort by newest first
+      .limit(1000);
 
     return NextResponse.json({
       success: true,
       target,
-      interactionCount,
+      interactionCount: totalCount,
+      limitedData,
       count,
     });
   } catch (error) {

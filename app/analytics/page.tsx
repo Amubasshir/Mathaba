@@ -33,6 +33,7 @@ export default function AnalyticsPage() {
                 uniqueUsers: data.count,
                 totalInteractions: data.interactionCount,
             })
+            setAnalyticsData(data.limitedData)
           console.log(`Total users for target ${targetP}:`, data.count);
           // You can store this count in state if needed
           // setTargetCount(data.count);
