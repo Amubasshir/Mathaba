@@ -36,7 +36,6 @@ export default function Home({ params }: PageProps) {
     return <div>Page Not Found</div>;
   }
 
-  console.log("Rendering Home with theme:", theme);
   return (
     <ThemeProvider theme={theme}>
       <RootComponent theme={theme} />

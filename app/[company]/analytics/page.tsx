@@ -5,10 +5,12 @@ import { DataTable } from '@/components/analytics/data-table';
 import MainLayout from '@/components/layouts/main-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, Globe, MessageSquare, Users } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState<Interaction[]>([]);
+  const pathname = usePathname();
   const [stats, setStats] = useState({
     totalInteractions: 0,
     uniqueUsers: 0,
@@ -16,40 +18,37 @@ export default function AnalyticsPage() {
     avgResponseTime: '0.5s',
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
+  
+
+   // Separate useEffect for getting target count
+   useEffect(() => {
+    const targetP = pathname.split('/')[1];
+    const getTargetCount = async () => {
       try {
-        const response = await fetch('/api/analytics/store');
+        const response = await fetch(`/api/targeted-users?target=${targetP}`);
         const data = await response.json();
 
-        if (data.interactions) {
-          setAnalyticsData(data.interactions);
-
-          // Calculate stats
-          const uniqueUsers = new Set(
-            data.interactions.map((i: Interaction) => i.userId)
-          ).size;
-          const uniqueLanguages = new Set(
-            data.interactions.map((i: Interaction) => i.language)
-          ).size;
-
-          setStats({
-            totalInteractions: data.interactions.length,
-            uniqueUsers,
-            languages: uniqueLanguages,
-            avgResponseTime: '0.5s', // You might want to calculate this based on actual response times
-          });
+        if (data.success) {
+            // setCountedUsers(data.count);
+            setStats({
+                ...stats,
+                uniqueUsers: data.count,
+                totalInteractions: data.interactionCount,
+            })
+          console.log(`Total users for target ${targetP}:`, data.count);
+          // You can store this count in state if needed
+          // setTargetCount(data.count);
         }
       } catch (error) {
-        console.error('Failed to fetch analytics data:', error);
+        console.error("Error getting target count:", error);
       }
     };
 
-    fetchData();
+    getTargetCount();
     // Fetch every 30 seconds
-    const interval = setInterval(fetchData, 30000);
+    const interval = setInterval(getTargetCount, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [pathname]);
 
   return (
     <MainLayout>

@@ -19,7 +19,7 @@ interface ThemeProviderProps {
 }
 
 export default function ThemeProvider({ theme, children }: ThemeProviderProps) {
-  console.log('ThemeProvider received theme:', theme.name);
+//   console.log('ThemeProvider received theme:', theme.name);
   
   return (
     <ThemeContext.Provider value={theme}>

@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/language-context";
 import { ThemeConfig } from "@/lib/themes";
-import { Globe, GlobeLock, Send, Sparkles, SquareArrowOutUpRight, Star } from "lucide-react";
+import { Globe, GlobeLock, Send, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -24,6 +25,7 @@ export default function Chat({
   theme,
 }: {
   setIsManualChat: (isManualChat: boolean) => void;
+  theme: ThemeConfig;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -52,8 +54,11 @@ export default function Chat({
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
   const [isStarted, setIsStarted] = useState(false);
   const [isWebSearch, setIsWebSearch] = useState(false);
+  const pathname = usePathname();
 
-  console.log( {isWebSearch});
+  
+
+  console.log({ isWebSearch });
   useEffect(() => {
     if (!inputValue.trim()) {
       setSuggestions([]);
@@ -107,12 +112,12 @@ export default function Chat({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-//  ! don't remove this, it will scroll to bottom when new message is added
-//   useEffect(() => {
-//     if(!selectedSuggestion){
-//         scrollToBottom();
-//     }
-//   }, [messages, typingText, selectedSuggestion]);
+  //  ! don't remove this, it will scroll to bottom when new message is added
+  //   useEffect(() => {
+  //     if(!selectedSuggestion){
+  //         scrollToBottom();
+  //     }
+  //   }, [messages, typingText, selectedSuggestion]);
 
   // Typewriter effect
   useEffect(() => {
@@ -171,13 +176,47 @@ export default function Chat({
 
   // Initialize userId on component mount
   useEffect(() => {
+    const targetP = pathname.split('/')[1] || "home";
     let storedUserId = localStorage.getItem("userId");
+    let storedTarget = localStorage.getItem(targetP);
+
     if (!storedUserId) {
       storedUserId = uuidv4();
       localStorage.setItem("userId", storedUserId);
     }
     setUserId(storedUserId);
-  }, []);
+
+    // Check if we need to call the API
+    if (!storedTarget) {
+      const checkAndSaveTargetedUser = async () => {
+        try {
+          const response = await fetch("/api/targeted-users", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              uuid: storedUserId,
+              target: targetP,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            // Save to localStorage regardless of whether user existed or was newly created
+            localStorage.setItem(targetP, storedUserId);
+          }
+        } catch (error) {
+          console.error("Error checking/saving targeted user:", error);
+        }
+      };
+
+      checkAndSaveTargetedUser();
+    }
+  }, [pathname]);
+
+ 
 
   const handleSelectSuggestion = (suggestion: any) => {
     setSelectedSuggestion(suggestion);
@@ -260,13 +299,15 @@ export default function Chat({
 
   const sendMessage = async (content: string) => {
     // const selectedAssistantId = process.env.
-    let searchAssistantId="";
-    if(isWebSearch) {
-        searchAssistantId = process.env.NEXT_PUBLIC_WEB_SEARCH_ASSISTANT_ID as string;
-    }else{
-        searchAssistantId = process.env.NEXT_PUBLIC_NORMAL_SEARCH_ASSISTANT_ID as string;
+    let searchAssistantId = "";
+    if (isWebSearch) {
+      searchAssistantId = process.env
+        .NEXT_PUBLIC_WEB_SEARCH_ASSISTANT_ID as string;
+    } else {
+      searchAssistantId = process.env
+        .NEXT_PUBLIC_NORMAL_SEARCH_ASSISTANT_ID as string;
     }
-    if(!searchAssistantId) return;
+    if (!searchAssistantId) return;
 
     try {
       let newThreadId = threadId;
@@ -360,7 +401,7 @@ export default function Chat({
               content: JSON.stringify(searchResults),
               assistantId: searchAssistantId,
               toolCallId: toolCall.id,
-              searchMode: isWebSearch ? 'search_web' : 'search_normal',
+              searchMode: isWebSearch ? "search_web" : "search_normal",
             }),
           });
 
@@ -375,11 +416,11 @@ export default function Chat({
           return finalData.message;
         }
       }
-    setIsStarted(false);
-    return data.message;
-} catch (err) {
-    setIsStarted(false);
-    console.error("Error in sendMessage:", err);
+      setIsStarted(false);
+      return data.message;
+    } catch (err) {
+      setIsStarted(false);
+      console.error("Error in sendMessage:", err);
       setError(err instanceof Error ? err.message : "Failed to send message");
       return null;
     }
@@ -461,7 +502,7 @@ export default function Chat({
 
     setIsLoading(false);
   };
-  
+
   // Modify handleCategoryQuestionSelect to store interactions
   const handleCategoryQuestionSelect = (question: string, answer: string) => {
     if (isLoading) return;
@@ -558,7 +599,6 @@ export default function Chat({
       });
   };
 
-  
   return (
     <div
       className={`flex flex-col w-full max-w-3xl mx-auto ${
@@ -615,7 +655,7 @@ export default function Chat({
                   </p>
                 )}
 
-                {message.role === "assistant" &&<br />}
+                {message.role === "assistant" && <br />}
                 <div className="flex flex-col gap-2 -mt-3">
                   {/* {message?.url && (
                     <Link href={message?.url} target="_blank">
@@ -626,29 +666,34 @@ export default function Chat({
                     </Link>
                   )} */}
                   {message?.ref && message?.url && (
-                    <Link href={message?.url ? message.url : "#"} target="_blank">
+                    <Link
+                      href={message?.url ? message.url : "#"}
+                      target="_blank"
+                    >
                       {" "}
                       <span className=" bg-gray-200 text-blue-700 text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1 underline">
-                      Ref: {message?.ref}
+                        Ref: {message?.ref}
                       </span>
                     </Link>
                   )}
                   {message?.ref && !message?.url && (
-                      <span className=" bg-gray-200  text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1">
+                    <span className=" bg-gray-200  text-xs px-2 rounded-lg py-1 inline-flex items-center gap-1">
                       Ref: {message?.ref}
-                      </span>
+                    </span>
                   )}
                   {/* {message?.ref && (
                     <span className=" bg-gray-200 text-gray-700 text-xs px-2 rounded-lg inline-flex items-center gap-1 py-1">
                       Ref: {message?.ref}
                     </span>
                   )} */}
-                  {!isStarted && message.role === "assistant" && language !== "ar" && (
-                    <span className=" text-gray-700 text-xs pr-2 py-0.5 rounded-full inline-flex items-center gap-1 italic">
-                      <Sparkles className="h-4 w-4 text-theme-gold" />{" "}
-                      Al translation from official Arabic source.
-                    </span>
-                  )}
+                  {!isStarted &&
+                    message.role === "assistant" &&
+                    language !== "ar" && (
+                      <span className=" text-gray-700 text-xs pr-2 py-0.5 rounded-full inline-flex items-center gap-1 italic">
+                        <Sparkles className="h-4 w-4 text-theme-gold" /> Al
+                        translation from official Arabic source.
+                      </span>
+                    )}
                 </div>
               </div>
             </div>
@@ -700,13 +745,18 @@ export default function Chat({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className={`h-8 w-8 ${isWebSearch ? "text-blue-600" : 'text-[#6b6291]'} hover:text-[#6b6291]`}
-                  onClick={()=> setIsWebSearch(!isWebSearch)}
-                //   disabled={isLoading || !inputValue.trim()}
+                  className={`h-8 w-8 ${
+                    isWebSearch ? "text-blue-600" : "text-[#6b6291]"
+                  } hover:text-[#6b6291]`}
+                  onClick={() => setIsWebSearch(!isWebSearch)}
+                  //   disabled={isLoading || !inputValue.trim()}
                 >
                   {/* <Send className="h-5 w-5" /> */}
-                  {!isWebSearch ? <GlobeLock className="h-6 w-6" /> :
-                  <Globe className="h-6 w-6" />}
+                  {!isWebSearch ? (
+                    <GlobeLock className="h-6 w-6" />
+                  ) : (
+                    <Globe className="h-6 w-6" />
+                  )}
                   {/* <span className="sr-only">Send</span> */}
                 </Button>
                 <textarea
@@ -735,21 +785,21 @@ export default function Chat({
               </div>
 
               {/* suggestions */}
-               {suggestions?.length > 0 && (
-            <div className="max-h-44 overflow-hidden overflow-y-auto bg-white w-full border-t-2 pt-2 mt-3">
-              <ul>
-                {suggestions?.map((suggestion) => (
-                  <li
-                    key={suggestion?.id}
-                    className="cursor-pointer text-[#646263] hover:bg-gray-100 p-2 rounded"
-                    onClick={() => handleSelectSuggestion(suggestion)}
-                  >
-                    {suggestion?.[`questions_${language}`]}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+              {suggestions?.length > 0 && (
+                <div className="max-h-44 overflow-hidden overflow-y-auto bg-white w-full border-t-2 pt-2 mt-3">
+                  <ul>
+                    {suggestions?.map((suggestion) => (
+                      <li
+                        key={suggestion?.id}
+                        className="cursor-pointer text-[#646263] hover:bg-gray-100 p-2 rounded"
+                        onClick={() => handleSelectSuggestion(suggestion)}
+                      >
+                        {suggestion?.[`questions_${language}`]}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* </div> */}

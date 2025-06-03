@@ -11,6 +11,7 @@ const interactionSchema = new mongoose.Schema(
     source: String,
     sessionId: String,
     threadId: String,
+    target: String,
     location: {
       city: String,
       country: String,
