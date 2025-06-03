@@ -297,7 +297,7 @@ export default function Chat({
     }
   };
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = async (content: string, target: string) => {
     // const selectedAssistantId = process.env.
     let searchAssistantId = "";
     if (isWebSearch) {
@@ -339,6 +339,7 @@ export default function Chat({
               language,
               location: userLocation,
               userId: userId,
+              target
             }),
           });
 
@@ -460,6 +461,7 @@ export default function Chat({
 
   const handleSubmit = async () => {
     if (!inputValue.trim() || isLoading) return;
+    const target = pathname.split('/')[1] || "home"
 
     const content = inputValue.trim();
     setInputValue("");
@@ -483,7 +485,7 @@ export default function Chat({
     ]);
 
     // Get assistant response
-    const response = await sendMessage(content);
+    const response = await sendMessage(content, target);
 
     // Remove thinking message and start streaming
     setMessages((prev) => {

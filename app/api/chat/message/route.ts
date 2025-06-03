@@ -218,6 +218,7 @@ export async function POST(req: Request) {
       location,
       userId,
       searchMode,
+      target,
     } = await req.json();
 
     // Handle tool call responses
@@ -650,6 +651,7 @@ Do not include anything else in your response.
             ? lastMessageContent.text.value
             : "",
         language,
+        target,
         source: "chat",
         sessionId: threadId,
         threadId: threadId,
