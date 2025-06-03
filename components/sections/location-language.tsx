@@ -25,7 +25,7 @@ export default function LocationLanguage({theme}: PageProps) {
 
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => router.push(theme?.location as string)}
+            onClick={() => router.push(theme?.location as string || '/locations') }
             variant="custom"
             className="flex-1 max-w-[160px] gap-1.5 btn-bg text-white py-[1px]"
           >

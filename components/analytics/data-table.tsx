@@ -29,6 +29,7 @@ import { useState } from 'react';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  totalInteractions?:number;
 }
 
 // Language-specific labels
@@ -54,6 +55,7 @@ const translations = {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  totalInteractions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -160,7 +162,7 @@ Answer: ${row.assistantResponse}
           {isDownloading ? t.downloading : t.download}
         </Button>
         <div className="text-sm text-muted-foreground" dir={dir}>
-          {table.getFilteredRowModel().rows.length} {t.interactionsFound}
+          {totalInteractions} {t.interactionsFound}
         </div>
       </div>
 

@@ -144,6 +144,7 @@ export default function Chat({
   // Initialize thread on component mount and when language changes
   useEffect(() => {
     // Clear existing messages when language changes
+    console.log("object 😁😁", language);
     setMessages([]);
     createThread();
   }, [language]); // Add language as a dependency
@@ -260,6 +261,7 @@ export default function Chat({
 
       // Add the greeting message if it exists
       if (data.greeting) {
+        console.log("❤️‍🔥❤️‍🔥❤️‍🔥❤️‍🔥", {data});
         setMessages([
           {
             role: "assistant",
@@ -274,6 +276,8 @@ export default function Chat({
       return null;
     }
   };
+
+  console.log("i am messages", {messages});
 
   const moderateMessage = async (content: string) => {
     try {

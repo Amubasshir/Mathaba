@@ -5,6 +5,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 // type Language = 'en' | 'ar';
 type Language =
   | 'ar'
+  | 'bn'
   | 'en'
   | 'fr'
   | 'fa'
@@ -35,6 +36,7 @@ type Category = {
   category: {
     name: {
       en: string;
+      bn: string;
       ar: string;
       fr: string;
       fa: string;
@@ -58,6 +60,7 @@ type Category = {
 type Question = {
   question: {
     en: string;
+    bn: string;
     ar: string;
     fr: string;
     fa: string;
@@ -76,6 +79,7 @@ type Question = {
   };
   answer: {
     en: string;
+    bn: string;
     ar: string;
     fr: string;
     fa: string;
@@ -120,6 +124,11 @@ const translations: Record<
     'research.centers': 'Locations',
     'ask.me': 'Ask me',
     feedback: 'Feedback',
+  },
+   bn: {
+    "research.centers": "অবস্থানসমূহ",
+    "ask.me": "আমাকে জিজ্ঞাসা করুন",
+    "feedback": "মতামত"
   },
   ar: {
     'research.centers': 'المواقع',
@@ -411,6 +420,7 @@ const categories = [
     category: {
       name: {
         en: 'Health Question',
+        bn: "স্বাস্থ্য সম্পর্কিত প্রশ্ন",
         ar: 'سؤال صحي',
         fr: 'Question de santé',
         fa: 'سوال بهداشتی',
@@ -431,6 +441,7 @@ const categories = [
         {
           question: {
             en: 'What is the significance of physical ability in performing Umrah and Hajj?',
+            bn: "উমরাহ ও হজ পালনে শারীরিক সক্ষমতার গুরুত্ব কী?",
             ar: 'ما أهمية القدرة البدنية في أداء العمرة والحج؟',
             fr: "Quelle est l'importance de la capacité physique dans l'accomplissement de la Omra et du Hajj ?",
             fa: 'اهمیت توانایی جسمی در انجام عمره و حج چیست؟',
@@ -449,6 +460,7 @@ const categories = [
           },
           answer: {
             en: 'Physical ability is a condition for performing Umrah and Hajj as it requires great physical effort.',
+            bn: "উমরাহ ও হজ পালনের জন্য শারীরিক সক্ষমতা একটি শর্ত, কারণ এতে প্রচণ্ড শারীরিক পরিশ্রমের প্রয়োজন হয়।",
             ar: 'القدرة البدنية شرط لأداء العمرة والحج حيث يتطلب جهداً بدنياً كبيراً.',
             fr: 'La capacité physique est une condition pour effectuer la Omra et le Hajj car elle nécessite un grand effort physique.',
             fa: 'توانایی جسمی شرط انجام عمره و حج است زیرا تلاش بدنی زیادی را می طلبد.',
@@ -468,6 +480,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'How should pilgrims manage their medications during Umrah and Hajj?',
             ar: 'كيف يجب على الحجاج إدارة أدويتهم خلال العمرة والحج؟',
             fr: 'Comment les pèlerins doivent-ils gérer leurs médicaments pendant la Omra et le Hajj ?',
@@ -486,6 +499,7 @@ const categories = [
             uz: "Ziyoratchilar Umra va Haj paytida o'z dori-darmonlarini qanday boshqarishlari kerak?",
           },
           answer: {
+            bn: "",
             en: 'Pilgrims should take sufficient medications and store them at the correct temperature.',
             ar: 'يجب على الحجاج أخذ الأدوية الكافية وتخزينها في درجة الحرارة المناسبة.',
             fr: 'Les pèlerins doivent prendre suffisamment de médicaments et les conserver à la bonne température.',
@@ -506,6 +520,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'What are the recommendations for preventing food poisoning during Umrah and Hajj?',
             ar: 'ما هي التوصيات للوقاية من التسمم الغذائي خلال العمرة والحج؟',
             fr: 'Quelles sont les recommandations pour prévenir les intoxications alimentaires pendant la Omra et le Hajj ?',
@@ -524,6 +539,7 @@ const categories = [
             uz: "Umra va Haj paytida ovqatdan zaharlanishning oldini olish bo'yicha tavsiyalar qanday?",
           },
           answer: {
+            bn: "",
             en: 'Avoid eating food that has been stored for long periods and ensure fruits and vegetables are washed.',
             ar: 'تجنب تناول الطعام المخزن لفترات طويلة والتأكد من غسل الفواكه والخضروات.',
             fr: 'Évitez de manger des aliments qui ont été stockés pendant de longues périodes et assurez-vous que les fruits et légumes sont lavés.',
@@ -544,6 +560,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'Why are face masks important during Umrah and Hajj?',
             ar: 'لماذا تعتبر الكمامات مهمة خلال العمرة والحج؟',
             fr: 'Pourquoi les masques faciaux sont-ils importants pendant la Omra et le Hajj ?',
@@ -562,6 +579,7 @@ const categories = [
             uz: 'Umra va Haj paytida yuz niqoblari nima uchun muhim?',
           },
           answer: {
+            bn: "",
             en: 'Face masks help prevent the spread of infectious viruses and should be worn in crowded places.',
             ar: 'تساعد الكمامات في منع انتشار الفيروسات المعدية ويجب ارتداؤها في الأماكن المزدحمة.',
             fr: 'Les masques faciaux aident à prévenir la propagation des virus infectieux et doivent être portés dans les endroits bondés.',
@@ -587,6 +605,7 @@ const categories = [
     id: 2,
     category: {
       name: {
+        bn: "",
         en: 'Financial Awareness Question',
         ar: 'سؤال التوعية المالية',
         fr: 'Question de sensibilisation financière',
@@ -607,6 +626,7 @@ const categories = [
       questions: [
         {
           question: {
+            bn: "",
             en: 'What are the ways to convert currency in Saudi Arabia?',
             ar: 'ما هي طرق تحويل العملة في المملكة العربية السعودية؟',
             fr: 'Quels sont les moyens de convertir des devises en Arabie Saoudite ?',
@@ -625,6 +645,7 @@ const categories = [
             uz: 'Saudiya Arabistonida valyutani almashtirish usullari qanday?',
           },
           answer: {
+            bn: "",
             en: 'Currency conversion can be done at certified exchanges, licensed banks, and electronic banks.',
             ar: 'يمكن تحويل العملة في مراكز الصرافة المعتمدة والبنوك المرخصة والبنوك الإلكترونية.',
             fr: 'La conversion de devises peut se faire dans les bureaux de change agréés, les banques agréées et les banques électroniques.',
@@ -645,6 +666,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'What items require a customs declaration upon entering and leaving Saudi Arabia?',
             ar: 'ما هي الأشياء التي تتطلب إقراراً جمركياً عند دخول المملكة العربية السعودية ومغادرتها؟',
             fr: "Quels articles nécessitent une déclaration en douane lors de l'entrée et de la sortie d'Arabie Saoudite ?",
@@ -663,6 +685,7 @@ const categories = [
             uz: 'Saudiya Arabistoniga kirish va chiqishda qanday narsalar bojxona deklaratsiyasini talab qiladi?',
           },
           answer: {
+            bn: "",
             en: 'You must declare cash over 60,000 riyals, gold bars, and precious metals.',
             ar: 'يجب الإقرار عن النقد الذي يزيد عن 60,000 ريال، وسبائك الذهب، والمعادن الثمينة.',
             fr: "Vous devez déclarer les espèces supérieures à 60 000 riyals, les lingots d'or et les métaux précieux.",
@@ -683,6 +706,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'Which electronic payment methods are accepted in Saudi Arabia?',
             ar: 'ما هي وسائل الدفع الإلكترونية المقبولة في المملكة العربية السعودية؟',
             fr: 'Quels modes de paiement électroniques sont acceptés en Arabie Saoudite ?',
@@ -701,6 +725,7 @@ const categories = [
             uz: "Saudiya Arabistonida qanday elektron to'lov usullari qabul qilinadi?",
           },
           answer: {
+            bn: "",
             en: 'Credit cards, bank transfers, and SADAD are commonly accepted electronic payment methods.',
             ar: 'البطاقات الائتمانية والتحويلات البنكية ونظام سداد هي وسائل الدفع الإلكترونية الشائعة.',
             fr: 'Les cartes de crédit, les virements bancaires et SADAD sont des modes de paiement électroniques couramment acceptés.',
@@ -721,6 +746,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'Is it necessary to carry a lot of cash during a trip to Saudi Arabia?',
             ar: 'هل من الضروري حمل الكثير من النقود خلال الرحلة إلى المملكة العربية السعودية؟',
             fr: "Est-il nécessaire d'emporter beaucoup d'argent liquide lors d'un voyage en Arabie Saoudite ?",
@@ -739,6 +765,7 @@ const categories = [
             uz: "Saudiya Arabistoniga sayohat paytida ko'p naqd pul olib yurish kerakmi?",
           },
           answer: {
+            bn: "",
             en: 'No, as most financial transactions can be made with electronic payments.',
             ar: 'لا، حيث يمكن إجراء معظم المعاملات المالية عبر وسائل الدفع الإلكترونية.',
             fr: 'Non, car la plupart des transactions financières peuvent être effectuées avec des paiements électroniques.',
@@ -764,6 +791,7 @@ const categories = [
     id: 3,
     category: {
       name: {
+        bn: "",
         en: 'Legal Awareness Question',
         ar: 'سؤال التوعية القانونية',
         fr: 'Question de sensibilisation juridique',
@@ -784,6 +812,7 @@ const categories = [
       questions: [
         {
           question: {
+            bn: "",
             en: 'What penalties face a licensee who violates rules in Saudi Arabia for pilgrim-related services?',
             ar: 'ما هي العقوبات التي يواجهها المرخص له الذي يخالف القواعد في المملكة العربية السعودية للخدمات المتعلقة بالحجاج؟',
             fr: 'Quelles sont les sanctions encourues par un titulaire de licence qui viole les règles en Arabie Saoudite pour les services liés aux pèlerins ?',
@@ -802,6 +831,7 @@ const categories = [
             uz: "Saudiya Arabistonida ziyoratchilar bilan bog'liq xizmatlar uchun qoidalarni buzgan litsenziatga qanday jazolar qo'llaniladi?",
           },
           answer: {
+            bn: "",
             en: 'Penalties include license revocation, fines up to SR100,000, and possible suspension.',
             ar: 'تشمل العقوبات إلغاء الترخيص وغرامات تصل إلى 100,000 ريال سعودي والإيقاف المحتمل.',
             fr: "Les sanctions comprennent le retrait de la licence, des amendes allant jusqu'à 100 000 SR et une éventuelle suspension.",
@@ -822,6 +852,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'What happens if someone provides pilgrim services without a license?',
             ar: 'ماذا يحدث إذا قدم شخص خدمات للحجاج بدون ترخيص؟',
             fr: "Que se passe-t-il si quelqu'un fournit des services aux pèlerins sans licence ?",
@@ -840,6 +871,7 @@ const categories = [
             uz: "Agar kimdir litsenziyasiz ziyoratchilarga xizmat ko'rsatsa, nima bo'ladi?",
           },
           answer: {
+            bn: "",
             en: 'They face a fine up to SR100,000, which can double upon repeat offenses.',
             ar: 'يواجهون غرامة تصل إلى 100,000 ريال سعودي، ويمكن أن تتضاعف عند تكرار المخالفات.',
             fr: "Ils encourent une amende pouvant aller jusqu'à 100 000 SR, qui peut doubler en cas de récidive.",
@@ -860,6 +892,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'What are the responsibilities of a domestic pilgrims service provider?',
             ar: 'ما هي مسؤوليات مقدم خدمات الحجاج المحليين؟',
             fr: "Quelles sont les responsabilités d'un prestataire de services aux pèlerins nationaux ?",
@@ -878,6 +911,7 @@ const categories = [
             uz: "Mahalliy ziyoratchilarga xizmat ko'rsatuvchi provayderning vazifalari qanday?",
           },
           answer: {
+            bn: "",
             en: 'They must provide all necessary services to registered pilgrims and ensure smooth performance of rituals.',
             ar: 'يجب عليهم تقديم جميع الخدمات اللازمة للحجاج المسجلين وضمان أداء المناسك بسلاسة.',
             fr: 'Ils doivent fournir tous les services nécessaires aux pèlerins inscrits et assurer le bon déroulement des rituels.',
@@ -898,6 +932,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'Is it mandatory for service contracts with pilgrims to follow a standard model?',
             ar: 'هل من الإلزامي أن تتبع عقود الخدمة مع الحجاج نموذجاً موحداً؟',
             fr: 'Est-il obligatoire que les contrats de service avec les pèlerins suivent un modèle standard ?',
@@ -916,6 +951,7 @@ const categories = [
             uz: "Ziyoratchilar bilan xizmat ko'rsatish shartnomalari standart modelga amal qilishi majburiymi?",
           },
           answer: {
+            bn: "",
             en: 'Yes, they should follow a unified form issued by the Ministry of Umrah and Hajj.',
             ar: 'نعم، يجب أن تتبع النموذج الموحد الصادر عن وزارة العمرة والحج.',
             fr: 'Oui, ils doivent suivre un formulaire unifié publié par le ministère de la Omra et du Hajj.',
@@ -941,6 +977,7 @@ const categories = [
     id: 4,
     category: {
       name: {
+        bn: "",
         en: 'Al-Masjid Al-Haram Question',
         ar: 'سؤال المسجد الحرام',
         fr: "Question d'Al-Masjid Al-Haram",
@@ -961,6 +998,7 @@ const categories = [
       questions: [
         {
           question: {
+            bn: "",
             en: 'What is the significance of the Black Stone in Islam?',
             ar: 'ما هي أهمية الحجر الأسود في الإسلام؟',
             fr: "Quelle est la signification de la Pierre noire dans l'Islam ?",
@@ -979,6 +1017,7 @@ const categories = [
             uz: 'Islomda Qora toshning ahamiyati nimada?',
           },
           answer: {
+            bn: "",
             en: "The Black Stone is a stone from Paradise and serves as the start and finish point of each circuit around the Ka'ba.",
             ar: 'الحجر الأسود هو حجر من الجنة ويعتبر نقطة البداية والنهاية لكل شوط حول الكعبة.',
             fr: "La Pierre noire est une pierre du Paradis et sert de point de départ et d'arrivée à chaque circuit autour de la Kaaba.",
@@ -999,6 +1038,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: "Where is the Black Stone located in the Ka'ba?",
             ar: 'أين يقع الحجر الأسود في الكعبة؟',
             fr: 'Où se trouve la Pierre noire dans la Kaaba ?',
@@ -1017,6 +1057,7 @@ const categories = [
             uz: "Ka'bada Qora tosh qayerda joylashgan?",
           },
           answer: {
+            bn: "",
             en: "It is located in the southeastern corner of the Ka'ba, 1.5 meters from the ground.",
             ar: 'يقع في الركن الجنوبي الشرقي للكعبة، على ارتفاع 1.5 متر من الأرض.',
             fr: 'Il est situé dans le coin sud-est de la Kaaba, à 1,5 mètre du sol.',
@@ -1037,6 +1078,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'How should pilgrims interact with the Black Stone during pilgrimage?',
             ar: 'كيف يجب على الحجاج التعامل مع الحجر الأسود أثناء الحج؟',
             fr: 'Comment les pèlerins doivent-ils interagir avec la Pierre noire pendant le pèlerinage ?',
@@ -1055,6 +1097,7 @@ const categories = [
             uz: "Ziyorat paytida ziyoratchilar Qora tosh bilan qanday munosabatda bo'lishlari kerak?",
           },
           answer: {
+            bn: "",
             en: 'Pilgrims should touch and kiss the Black Stone after each circuit if possible; otherwise, waving at it from afar is acceptable.',
             ar: 'يجب على الحجاج لمس وتقبيل الحجر الأسود بعد كل شوط إذا أمكن؛ وإلا فالإشارة إليه من بعيد مقبولة.',
             fr: 'Les pèlerins doivent toucher et embrasser la Pierre noire après chaque circuit si possible ; sinon, il est acceptable de lui faire signe de loin.',
@@ -1075,6 +1118,7 @@ const categories = [
         },
         {
           question: {
+            bn: "",
             en: 'What is Maqam Ibraaheem and its significance?',
             ar: 'ما هو مقام إبراهيم وما أهميته؟',
             fr: "Qu'est-ce que Maqam Ibraheem et quelle est sa signification ?",
@@ -1093,6 +1137,7 @@ const categories = [
             uz: 'Maqomi Ibrohim nima va uning ahamiyati nimada?',
           },
           answer: {
+            bn: "",
             en: "Maqam Ibraaheem is where Ibrahim stood building the Ka'ba, and it is a sign in the Haram with the prophet's footprints.",
             ar: 'مقام إبراهيم هو المكان الذي وقف فيه إبراهيم عند بناء الكعبة، وهو علامة في الحرم تحتوي على آثار أقدام النبي.',
             fr: "Maqam Ibraaheem est l'endroit où Ibrahim s'est tenu pour construire la Kaaba, et c'est un signe dans le Haram avec les empreintes du prophète.",

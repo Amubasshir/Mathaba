@@ -17,6 +17,7 @@ export default function Hero({ theme }: PageProps) {
   //   };
   const heroText = {
     en: 'Rafiqi: The Digital Companion for the Guests of Allah',
+    bn: "রফিকি: আল্লাহর মেহমানদের জন্য একটি ডিজিটাল সহচর",
     ar: 'رفيقي :المرافق الرقمي لضيف الرحمن',
     fr: "Rafiqi : Le compagnon numérique pour les invités d'Allah",
     fa: 'رفیقی: همراه دیجیتال برای مهمانان الله',

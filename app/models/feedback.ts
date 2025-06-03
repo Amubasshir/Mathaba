@@ -17,6 +17,7 @@ const feedbackSchema = new mongoose.Schema(
       required: true,
       enum: [
         'ar',
+        'bn',
         'en',
         'fr',
         'fa',

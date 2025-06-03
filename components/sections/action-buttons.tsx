@@ -26,6 +26,7 @@ export default function ActionButtons({
   const buttonText = {
     faq: {
       en: 'FAQ',
+      bn: "প্রশ্নোত্তর",
       ar: 'الأسئلة المتكررة',
       fr: 'FAQ',
       fa: 'سوالات متداول',
@@ -41,11 +42,10 @@ export default function ActionButtons({
       my: 'အမေးများသောမေးခွန်းများ',
       hi: 'अक्सर पूछे जाने वाले प्रश्न',
       uz: 'TSS',
-      bn: 'FAQ',
     },
     guides: {
       en: 'Educational Guides',
-       en:"শিক্ষামূলক নির্দেশিকা",
+       bn:"শিক্ষামূলক নির্দেশিকা",
       ar: 'الأدلة التوعوية',
       fr: 'Guides éducatifs',
       fa: 'راهنماهای آموزشی',
@@ -70,6 +70,7 @@ export default function ActionButtons({
       id: 1,
       text: {
         en: 'Health Awareness',
+        bn: "স্বাস্থ্য সচেতনতা",
         ar: 'التوعية الصحية',
         fr: 'Sensibilisation à la santé',
         fa: 'آگاهی از سلامت',
@@ -88,6 +89,7 @@ export default function ActionButtons({
       },
       urls: {
         en: 'https://drive.google.com/file/d/1CWPA4hSIhyRcxok6Y1Th83wXCU3-A07f/view',
+        bn: '',
         ar: 'https://drive.google.com/file/d/1LFFIXK-pY1ThqLzQQrTslIaOmg2asT2h/view',
         fr: 'https://drive.google.com/file/d/1adyOaOK3pI7ROt6d_FMxzw5nGqvbXvvM/view?usp=sharing',
         fa: 'https://drive.google.com/file/d/16sC0gaf4BsmosMNoPTZaaHCZmVJmVPb4/view?usp=sharing',
@@ -148,6 +150,7 @@ export default function ActionButtons({
       id: 3,
       text: {
         en: 'Legal Awareness Guide',
+        bn: "আইন সচেতনতা নির্দেশিকা",
         ar: 'دليل التوعية القانونية',
         fr: 'Guide de sensibilisation juridique',
         fa: 'راهنمای آگاهی حقوقی',
@@ -166,6 +169,7 @@ export default function ActionButtons({
       },
       urls: {
         en: 'https://drive.google.com/file/d/1IwB9HdvtI0yoVo1IraXTKSXzhXEV3yJQ/view?usp=sharing',
+        bn: '',
         ar: 'https://drive.google.com/file/d/1C5aZqUwHlOup5HZESxeQmbkMyHjuOEsn/view?usp=sharing',
         fr: 'https://drive.google.com/file/d/1bY6ydhWEtdImLZ5UlBEDMdBMk7g89SRt/view?usp=sharing',
         fa: 'https://drive.google.com/file/d/1PfKED56Yb8Kut57H2EqihEa5wT9xJaxJ/view?usp=sharing',
@@ -187,6 +191,7 @@ export default function ActionButtons({
       id: 4,
       text: {
         en: 'Umrah Guide',
+        bn: "উমরাহ গাইড",
         ar: 'دليل العمرة',
         fr: 'Guide de la Omra',
         fa: 'راهنمای عمره',
@@ -205,6 +210,7 @@ export default function ActionButtons({
       },
       urls: {
         en: 'https://drive.google.com/file/d/1xhcdljVbFZQo45UQ2JbeDJFuL67prXOl/view?usp=sharing',
+        bn: '',
         ar: 'https://drive.google.com/file/d/13tE048S_ZK5LnOzxi-tyyJuS48_AWFrq/view?usp=sharing',
         fr: 'https://drive.google.com/file/d/1YXFykkM7dmqbuiKBZO94keMsqMi2HXdN/view?usp=sharing',
         fa: 'https://drive.google.com/file/d/1kAU8qBDMmuielGnUMn7810ZqvsuFesc0/view?usp=sharing',

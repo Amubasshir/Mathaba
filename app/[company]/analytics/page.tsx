@@ -14,7 +14,7 @@ export default function AnalyticsPage() {
   const [stats, setStats] = useState({
     totalInteractions: 0,
     uniqueUsers: 0,
-    languages: 0,
+    languages: 17,
     avgResponseTime: '0.5s',
   });
 
@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
               {/* <h2 className="text-xl font-semibold mb-6">
                 Interaction History
               </h2> */}
-              <DataTable columns={columns} data={analyticsData} />
+              <DataTable columns={columns} data={analyticsData} totalInteractions={stats.totalInteractions} />
             </div>
           </div>
         </div>

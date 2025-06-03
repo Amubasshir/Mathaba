@@ -32,6 +32,7 @@ type Language =
 
 const languages = [
   { code: 'ar', name: 'عربي' },
+  { code: 'bn', name: 'বাংলা' },
   { code: 'en', name: 'English' },
   { code: 'fr', name: 'French' },
   { code: 'fa', name: 'فارسی' },

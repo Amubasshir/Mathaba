@@ -24,6 +24,7 @@ function preserveFormatting(text: string): string {
 type Language =
   | "ar"
   | "en"
+  | "bn"
   | "fr"
   | "fa"
   | "ms"
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
 
     const greeting = {
         en: "Greetings, pilgrim. I am your Hajj and Umrah assistant, here to guide you on your spiritual journey. Whether you need health advice or information about your pilgrimage, I'm here to help.",
+        bn: "শুভেচ্ছা, হজযাত্রী। আমি আপনার হজ ও উমরাহ সহকারী, আপনার আধ্যাত্মিক যাত্রায় পথপ্রদর্শনের জন্য এখানে আছি। আপনি স্বাস্থ্য পরামর্শ চান কিংবা আপনার তীর্থযাত্রা সম্পর্কে তথ্য প্রয়োজন—আমি সাহায্য করতে প্রস্তুত।",
         ar: 'أهلاً بك ضيف الرحمن. أنا مساعدك في الحج والعمرة، هنا لأقدم لك التوجيه والدعم في رحلتك. كيف يمكنني مساعدتك اليوم؟',
         fr: "Salutations, pèlerin. Je suis votre assistant Hajj et Omra, ici pour vous guider dans votre voyage spirituel. Que vous ayez besoin de conseils de santé ou d'informations sur votre pèlerinage, je suis là pour vous aider.",
         fa: "درود بر شما، زائر. من دستیار حج و عمره شما هستم و اینجا هستم تا شما را در سفر معنوی خود راهنمایی کنم. چه به توصیه های بهداشتی نیاز داشته باشید و چه به اطلاعاتی در مورد زیارت خود، من اینجا هستم تا به شما کمک کنم.",
