@@ -7,6 +7,7 @@ import Footer from "@/components/sections/footer";
 import Hero from "@/components/sections/hero";
 import LocationLanguage from "@/components/sections/location-language";
 import TermsModal from "@/components/terms-and-conditoins";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { useState } from "react";
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
       <Chat setIsManualChat={setIsManualChat} />
       <TermsModal />
       <Footer />
+        <WhatsAppButton />
     </MainLayout>
   );
 }
