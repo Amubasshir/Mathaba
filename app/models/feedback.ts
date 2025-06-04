@@ -45,6 +45,10 @@ const feedbackSchema = new mongoose.Schema(
       required: true,
       enum: ['male', 'female'],
     },
+    target: {
+      type: String,
+      required: true,
+    },
     nationality: {
       type: String,
       required: true,

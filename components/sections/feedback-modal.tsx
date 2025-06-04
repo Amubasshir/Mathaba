@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/language-context";
 import { Dialog } from "@headlessui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, MapPin, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Location {
@@ -23,6 +24,7 @@ export default function FeedbackModal({
   setIsOpen,
 }: FeedbackModalProps) {
   const { language } = useLanguage();
+  const pathname = usePathname();
   const [feedbackData, setFeedbackData] = useState({
     rating: 0,
     message: "",
@@ -101,7 +103,7 @@ export default function FeedbackModal({
       lang: "bn",
          title: "আপনার মতামত জানান",
     description: "এই অ্যাপটি নিয়ে আপনি কতটা সন্তুষ্ট?",
-      rating: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      rating: ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯", "১০"],
           "inputPlaceHolder": "আমরা কীভাবে এই অ্যাপটি আরও উন্নত করতে পারি?",
     submitButtonText: "জমা দিন",
     successTitle: "আপনার মতামতের জন্য ধন্যবাদ!",
@@ -112,13 +114,13 @@ export default function FeedbackModal({
     genderLabel: "লিঙ্গ",
     nationalityLabel: "জাতীয়তা",
       ageRanges: [
-        { value: "13-17", label: "13-17" },
-        { value: "18-24", label: "18-24" },
-        { value: "25-34", label: "25-34" },
-        { value: "35-44", label: "35-44" },
-        { value: "45-54", label: "45-54" },
-        { value: "55-64", label: "55-64" },
-        { value: "65+", label: "65+" },
+         { "value": "13-17", "label": "১৩-১৭" },
+      { "value": "18-24", "label": "১৮-২৪" },
+      { "value": "25-34", "label": "২৫-৩৪" },
+      { "value": "35-44", "label": "৩৫-৪৪" },
+      { "value": "45-54", "label": "৪৫-৫৪" },
+      { "value": "55-64", "label": "৫৫-৬৪" },
+      { "value": "65+", "label": "৬৫+" }
       ],
       genders: [
       { value: "male", label: "পুরুষ" },
@@ -201,6 +203,8 @@ export default function FeedbackModal({
   };
 
   const handleSubmit = async () => {
+    let targetP = pathname.split('/')[1] || 'home';
+    if(!targetP) return;
     setError("");
     console.log("Starting submission with data:", feedbackData);
 
@@ -247,6 +251,7 @@ export default function FeedbackModal({
         nationality: feedbackData.nationality,
         language,
         location,
+        target: targetP,
       };
 
       console.log(
