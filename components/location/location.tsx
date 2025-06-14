@@ -50,6 +50,8 @@ const cities = [
   { id: 'makkah', name: 'Makkah', nameAr: 'مكة المكرمة' },
   { id: 'madinah', name: 'Madinah', nameAr: 'المدينة المنورة' },
   { id: 'jeddah', name: 'Jeddah', nameAr: 'جدة' },
+  { id: 'taif', name: 'Taif', nameAr: 'الطائف' }
+
 ];
 
 // Locations data from the Excel sheet
